@@ -14,4 +14,5 @@ import java.rmi.RemoteException;
  */
 public interface Hello extends Remote{
     String sayHello(String persona) throws RemoteException;
+    String sayHello() throws RemoteException;
 }

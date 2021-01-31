@@ -15,7 +15,13 @@ public class Server extends UnicastRemoteObject implements Hello {
         System.out.println("Hora de peticion: "+LocalDateTime.now().toString());
         return "Hello, world! "+persona;
     }
-        
+    
+    @Override
+    public String sayHello(){
+        System.out.println("Hora de peticion: "+LocalDateTime.now().toString());
+        return "Hello, world! ";
+    }
+    
     public static void main(String args[]) {
         
         try {
