@@ -11,9 +11,9 @@ public class Server extends UnicastRemoteObject implements Hello {
     public Server() throws RemoteException{}
 
     @Override
-    public String sayHello(){
+    public String sayHello(String persona){
         System.out.println("Hora de peticion: "+LocalDateTime.now().toString());
-        return "Hello, world!";
+        return "Hello, world! "+persona;
     }
         
     public static void main(String args[]) {
