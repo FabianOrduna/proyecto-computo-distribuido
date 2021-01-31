@@ -9,7 +9,7 @@ public class Client {
 
     public static void main(String[] args) {
 
-        String host = (args.length < 1) ? "148.205.36.207" : args[0];
+        String host = (args.length < 1) ? "148.205.36.206" : args[0];
         try {
             System.setProperty("java.rmi.server.hostname", host);
             Registry registry = LocateRegistry.getRegistry(1010);
