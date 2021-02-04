@@ -1,18 +1,27 @@
 package rmi;
         
+import bd.ModeloAlumno;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.dbcp2.BasicDataSource;
         
 public class Server extends UnicastRemoteObject implements Hello {
-        
-    public Server() throws RemoteException{}
+    
+    private ModeloAlumno modeloAlumno;
+    
+    public Server() throws RemoteException, SQLException{
+        this.modeloAlumno = new ModeloAlumno();
+    }
 
     @Override
     public String sayHello(String persona){
-        System.out.println("Hora de peticion: "+LocalDateTime.now().toString());
+        System.out.println("Hora de peticion: "+LocalDateTime.now().toString()+" : "+persona);
         return "Hello, world! "+persona;
     }
     
@@ -20,6 +29,26 @@ public class Server extends UnicastRemoteObject implements Hello {
     public String sayHello(){
         System.out.println("Hora de peticion: "+LocalDateTime.now().toString());
         return "Hello, world! ";
+    }
+    
+    @Override
+    public int insertaAlumno(String nombre, String paterno, String materno) throws RemoteException {
+        try {
+            return modeloAlumno.insertaAlumno(nombre, paterno, materno);
+        } catch (SQLException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            return 0;
+        }
+    }
+
+    @Override
+    public int actualizaAlumno(int idAlumno, String nombre, String paterno, String materno) throws RemoteException {
+        try {
+            return modeloAlumno.actualizaAlumno(idAlumno,nombre, paterno, materno);
+        } catch (SQLException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            return 0;
+        }
     }
     
     public static void main(String args[]) {
@@ -39,4 +68,6 @@ public class Server extends UnicastRemoteObject implements Hello {
             e.printStackTrace();
         }
     }
+
+    
 }
