@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 /**
- *
+ * https://www.codejava.net/java-se/jdbc/jdbc-tutorial-sql-insert-select-update-and-delete-examples
  * @author mcc06
  */
 public class ModeloAlumno {

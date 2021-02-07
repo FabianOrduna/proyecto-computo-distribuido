@@ -1,12 +1,16 @@
 package rmi;
         
+import bd.Lugar;
 import bd.ModeloAlumno;
+import bd.Persona;
+import bd.Vuelo;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -51,22 +55,49 @@ public class Server extends UnicastRemoteObject implements Hello {
         }
     }
     
-    public static void main(String args[]) {
-        
-        try {
-            Server obj = new Server();
-            //Hello stub = (Hello) UnicastRemoteObject.exportObject(obj, 0);
+    @Override
+    public ArrayList<Vuelo> vuelosHistoricos() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-            // Bind the remote object's stub in the registry
-            //Registry registry = LocateRegistry.getRegistry();
-            Registry registry = LocateRegistry.createRegistry(1010);
-            registry.bind("Hello", obj);
+    @Override
+    public ArrayList<Vuelo> vuelosDisponibles(String fecha) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-            System.out.println("Server ready");
-        } catch (Exception e) {
-            System.err.println("Server exception: " + e.toString());
-            e.printStackTrace();
-        }
+    @Override
+    public Vuelo obtenerVuelo(int idVuelo) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ArrayList<Persona> obtenerPersonasVuelo(int idVuelo) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ArrayList<Vuelo> vuelosHistoricosPersona(int idPersona) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ArrayList<Vuelo> vuelosDisponiblesPersona(String fecha, int idPersona) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ArrayList<Vuelo> vuelosAnterioresPersona(String fecha, int idPersona) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ArrayList<Lugar> obtenerLugares() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ArrayList<Vuelo> vuelosOrigenDestino(int idOrigen, int idDestino) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     
