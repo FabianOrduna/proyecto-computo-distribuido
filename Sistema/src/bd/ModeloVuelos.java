@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *
@@ -48,6 +49,58 @@ public class ModeloVuelos {
             System.out.println(e.toString());
             return null;
         }
+    }
+    
+    public ArrayList<Vuelo> vuelosDisponiblesPersona(String fecha, int idPersona){
+        ArrayList<Vuelo> resultados = new ArrayList();
+        String sql = "SELECT * FROM vuelo WHERE fecha >= ? and id_vuelo in ( SELECT id_vuelo FROM persona_vuelo WHERE id_persona = ?)";
+        ResultSet resultado;
+        Vuelo v;
+        try{
+            PreparedStatement statement = c.prepareStatement(sql);
+            statement.setString(1,fecha);
+            statement.setInt(2,idPersona);
+            resultado = statement.executeQuery();
+            System.out.println(resultado.toString());
+            while(resultado.next()){
+                int resIdVuelo = Integer.parseInt(resultado.getString("id_vuelo"));
+                int resIdOrigen = Integer.parseInt(resultado.getString("id_origen"));
+                int resIdDestino = Integer.parseInt(resultado.getString("id_destino"));
+                String resFecha = resultado.getString("fecha");
+                v= new Vuelo(resIdVuelo, resIdOrigen,resIdDestino, resFecha);
+                resultados.add(v);    
+            }
+        }catch(SQLException e){
+            System.out.println(e.toString());
+            return resultados;
+        }
+        return resultados;
+    }
+    
+    public ArrayList<Vuelo> vuelosOrigenDestino(int idOrigen, int idDestino){
+        ArrayList<Vuelo> resultados = new ArrayList();
+        String sql = "SELECT * FROM vuelo WHERE id_origen = ? and id_destino = ?";
+        ResultSet resultado;
+        Vuelo v;
+        try{
+            PreparedStatement statement = c.prepareStatement(sql);
+            statement.setInt(1,idOrigen);
+            statement.setInt(2,idDestino);
+            resultado = statement.executeQuery();
+            System.out.println(resultado.toString());
+            while(resultado.next()){
+                int resIdVuelo = Integer.parseInt(resultado.getString("id_vuelo"));
+                int resIdOrigen = Integer.parseInt(resultado.getString("id_origen"));
+                int resIdDestino = Integer.parseInt(resultado.getString("id_destino"));
+                String resFecha = resultado.getString("fecha");
+                v= new Vuelo(resIdVuelo, resIdOrigen,resIdDestino, resFecha);
+                resultados.add(v);    
+            }
+        }catch(SQLException e){
+            System.out.println(e.toString());
+            return resultados;
+        }
+        return resultados;
     }
     
     /**

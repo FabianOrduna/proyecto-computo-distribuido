@@ -71,7 +71,6 @@ public class Server extends UnicastRemoteObject implements Hello {
     @Override
     public Vuelo obtenerVuelo(int idVuelo) throws RemoteException{
         try {
-            
             return modeloVuelos.obtenVuelo(idVuelo);
         } catch (SQLException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
@@ -91,7 +90,7 @@ public class Server extends UnicastRemoteObject implements Hello {
 
     @Override
     public ArrayList<Vuelo> vuelosDisponiblesPersona(String fecha, int idPersona) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.modeloVuelos.vuelosDisponiblesPersona(fecha, idPersona);
     }
 
     @Override
@@ -106,7 +105,7 @@ public class Server extends UnicastRemoteObject implements Hello {
 
     @Override
     public ArrayList<Vuelo> vuelosOrigenDestino(int idOrigen, int idDestino) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.modeloVuelos.vuelosOrigenDestino(idOrigen, idDestino);
     }
 
     public static void main(String args[]) {

@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 
 public class Client {
 
@@ -18,19 +19,17 @@ public class Client {
             //Registry registry = LocateRegistry.getRegistry(1010);
             Registry registry = LocateRegistry.getRegistry(host, 1010);
             Hello stub = (Hello) registry.lookup("Hello");
-            //String response = stub.sayHello("FOF");
-            //int response = stub.insertaAlumno("Juana Cecilia", "Ferreira", "Ascencio");
             
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)); 
-            // Reading data using readLine 
-            System.out.println("Ingresa el numero de vuelo");
-            int numVuelo = Integer.parseInt(reader.readLine());           
-            Vuelo response = stub.obtenerVuelo(numVuelo);
+            /*
+            ArrayList<Vuelo> response = stub.vuelosOrigenDestino(3, 5);
             if(response!=null){
                 System.out.println("response: " + response.toString());
             }else{
                 System.out.println("La respuesta fue nula, no se encontró el vuelo.");
-            }
+            }*/
+            
+            System.out.println("Aqui escribe el metodo que quieres probar");
+            
             
         } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
