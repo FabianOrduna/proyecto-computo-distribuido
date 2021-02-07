@@ -7,6 +7,7 @@ package bd;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -25,6 +26,28 @@ public class ModeloVuelos {
         PreparedStatement statement = c.prepareStatement(sql);
         statement.setString(1,nombre);
         return statement.executeUpdate();
+    }
+    
+    public Vuelo obtenVuelo(int idVuelo) throws SQLException{
+               
+        String sql = "SELECT * FROM vuelo WHERE id_vuelo = ?";
+        ResultSet resultado;
+        try{
+            PreparedStatement statement = c.prepareStatement(sql);
+            statement.setInt(1,idVuelo);
+            resultado = statement.executeQuery();
+            System.out.println(resultado.toString());
+            resultado.next();
+            //(int idVuelo, int idOrigen, int idDestino, String fecha)
+            int resIdVuelo = Integer.parseInt(resultado.getString("id_vuelo"));
+            int resIdOrigen = Integer.parseInt(resultado.getString("id_origen"));
+            int resIdDestino = Integer.parseInt(resultado.getString("id_destino"));
+            String resFecha = resultado.getString("fecha");
+            return new Vuelo(resIdVuelo, resIdOrigen, resIdDestino, resFecha);
+        }catch(SQLException e){
+            System.out.println(e.toString());
+            return null;
+        }
     }
     
     /**

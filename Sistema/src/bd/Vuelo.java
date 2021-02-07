@@ -5,11 +5,12 @@
  */
 package bd;
 
+import java.io.Serializable;
 /**
  *
  * @author mcc06
  */
-public class Vuelo {
+public class Vuelo implements Serializable{
     private int idVuelo;
     private int idOrigen;
     private int idDestino;
@@ -53,6 +54,10 @@ public class Vuelo {
     public void setFecha(String fecha) {
         this.fecha = fecha;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Vuelo{" + "idVuelo=" + idVuelo + ", idOrigen=" + idOrigen + ", idDestino=" + idDestino + ", fecha=" + fecha + '}';
+    }
     
 }

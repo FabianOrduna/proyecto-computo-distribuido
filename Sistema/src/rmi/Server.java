@@ -2,6 +2,7 @@ package rmi;
         
 import bd.Lugar;
 import bd.ModeloAlumno;
+import bd.ModeloVuelos;
 import bd.Persona;
 import bd.Vuelo;
 import java.rmi.registry.Registry;
@@ -18,9 +19,11 @@ import org.apache.commons.dbcp2.BasicDataSource;
 public class Server extends UnicastRemoteObject implements Hello {
     
     private ModeloAlumno modeloAlumno;
+    private ModeloVuelos modeloVuelos;
     
     public Server() throws RemoteException, SQLException{
         this.modeloAlumno = new ModeloAlumno();
+        this.modeloVuelos = new ModeloVuelos();
     }
 
     @Override
@@ -66,8 +69,14 @@ public class Server extends UnicastRemoteObject implements Hello {
     }
 
     @Override
-    public Vuelo obtenerVuelo(int idVuelo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Vuelo obtenerVuelo(int idVuelo) throws RemoteException{
+        try {
+            
+            return modeloVuelos.obtenVuelo(idVuelo);
+        } catch (SQLException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
@@ -100,5 +109,22 @@ public class Server extends UnicastRemoteObject implements Hello {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public static void main(String args[]) {
+        
+        try {
+            Server obj = new Server();
+            //Hello stub = (Hello) UnicastRemoteObject.exportObject(obj, 0);
+
+            // Bind the remote object's stub in the registry
+            //Registry registry = LocateRegistry.getRegistry();
+            Registry registry = LocateRegistry.createRegistry(1010);
+            registry.bind("Hello", obj);
+
+            System.out.println("Server ready");
+        } catch (Exception e) {
+            System.err.println("Server exception: " + e.toString());
+            e.printStackTrace();
+        }
+    }
     
 }

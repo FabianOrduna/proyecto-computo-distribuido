@@ -14,7 +14,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
  * @author mcc06
  */
 public class ConnectionPool {
-    private final String DB="alumnos";
+    private final String DB="computo_distribuido";
     private final String URL="jdbc:mysql://localhost:3306/"+DB+"?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
     private final String USER="root";
     private final String PASS="";

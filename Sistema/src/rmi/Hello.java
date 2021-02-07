@@ -25,8 +25,8 @@ public interface Hello extends Remote{
       
     public ArrayList<Vuelo> vuelosHistoricos() throws RemoteException; //M
     public ArrayList<Vuelo> vuelosDisponibles(String fecha) throws RemoteException; //S
-    public Vuelo obtenerVuelo(int idVuelo); //F
-    public ArrayList<Persona> obtenerPersonasVuelo(int idVuelo); //M
+    public Vuelo obtenerVuelo(int idVuelo) throws RemoteException; //F
+    public ArrayList<Persona> obtenerPersonasVuelo(int idVuelo) throws RemoteException; //M
     public ArrayList<Vuelo> vuelosHistoricosPersona(int idPersona) throws RemoteException; //S
     public ArrayList<Vuelo> vuelosDisponiblesPersona(String fecha, int idPersona) throws RemoteException; //F
     public ArrayList<Vuelo> vuelosAnterioresPersona(String fecha, int idPersona) throws RemoteException; //M
