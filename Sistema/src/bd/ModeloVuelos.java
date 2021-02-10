@@ -197,6 +197,87 @@ public class ModeloVuelos {
         return resultados;
     }
     
+    // 2S -- vuelos Disponibles
+    public ArrayList<Vuelo> vuelosDisponibles(String fecha) throws SQLException{
+        
+        ArrayList<Vuelo> resultados = new ArrayList();
+        
+        String sql = "SELECT * FROM vuelo WHERE fecha >= ?";
+        ResultSet resultado;
+        Vuelo v;
+        
+        try{
+            PreparedStatement statement = c.prepareStatement(sql);
+            statement.setString(1,fecha);
+            
+            resultado = statement.executeQuery();
+            System.out.println(resultado.toString());
+            while(resultado.next()){
+                int resIdVuelo = Integer.parseInt(resultado.getString("id_vuelo"));
+                int resIdOrigen = Integer.parseInt(resultado.getString("id_origen"));
+                int resIdDestino = Integer.parseInt(resultado.getString("id_destino"));
+                String resFecha = resultado.getString("fecha");
+                v= new Vuelo(resIdVuelo, resIdOrigen,resIdDestino, resFecha);
+                resultados.add(v);    
+            }
+        }catch(SQLException e){
+            System.out.println(e.toString());
+            return resultados;
+        }
+        return resultados;
+    }
+
+    // 5S -- vuelosHistoricosPersona
+    public ArrayList<Vuelo> vuelosHistoricosPersona(int idPersona) throws SQLException{
+        ArrayList<Vuelo> resultados = new ArrayList();
+        String sql = "SELECT * FROM vuelo WHERE id_vuelo in ( SELECT id_vuelo FROM persona_vuelo WHERE id_persona = ?)";
+        ResultSet resultado;
+        Vuelo v;
+        try{
+            PreparedStatement statement = c.prepareStatement(sql);
+            statement.setInt(1,idPersona);
+            resultado = statement.executeQuery();
+            System.out.println(resultado.toString());
+            while(resultado.next()){
+                int resIdVuelo = Integer.parseInt(resultado.getString("id_vuelo"));
+                int resIdOrigen = Integer.parseInt(resultado.getString("id_origen"));
+                int resIdDestino = Integer.parseInt(resultado.getString("id_destino"));
+                String resFecha = resultado.getString("fecha");
+                v= new Vuelo(resIdVuelo, resIdOrigen,resIdDestino, resFecha);
+                resultados.add(v);    
+            }
+        }catch(SQLException e){
+            System.out.println(e.toString());
+            return resultados;
+        }
+        return resultados;
+    }
+
+    // 8S -- obtenerLugares
+    public ArrayList<Lugar> obtenerLugares() throws SQLException{
+        ArrayList<Lugar> resultados = new ArrayList();
+        
+        String sql = "SELECT DISTINCT id_lugar, nombre FROM lugar";
+        Lugar l;
+        ResultSet resultado;
+        try{
+            PreparedStatement statement = c.prepareStatement(sql);
+            resultado = statement.executeQuery();
+            System.out.println(resultado.toString());
+            
+            while(resultado.next()){
+                int resIdLugar = Integer.parseInt(resultado.getString("id_lugar"));
+                String resNombre = resultado.getString("nombre");
+                l = new Lugar(resIdLugar, resNombre);
+                resultados.add(l);    
+            }
+        }catch(SQLException e){
+            System.out.println(e.toString());
+            return resultados;
+        }
+        return resultados;
+    }
+
     /**
     
     * De Mariana Hernandez para todos:  01:48 PM
