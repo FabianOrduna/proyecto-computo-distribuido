@@ -9,7 +9,7 @@ package bd;
  *
  * @author mcc06
  */
-public class Persona {
+public class Persona implements Serializable{
     
     private int idPersona;
     private String nombre;
