@@ -73,6 +73,7 @@ public class Server extends UnicastRemoteObject implements Hello {
         try {
             return modeloVuelos.obtenVuelo(idVuelo);
         } catch (SQLException ex) {
+            System.out.println(ex.toString());
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;

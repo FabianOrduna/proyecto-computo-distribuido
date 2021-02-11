@@ -20,7 +20,7 @@ public class ModeloVuelos {
     private Connection c;
     
     public ModeloVuelos() throws SQLException{
-        //this.c = ConnectionPool.getInstance().getConnection();
+        this.c = ConnectionPool.getInstance().getConnection();
     }
     
     public int insertaViajero(String nombre) throws SQLException{
