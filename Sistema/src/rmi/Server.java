@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.dbcp2.BasicDataSource;
         
 public class Server extends UnicastRemoteObject implements Hello {
     
@@ -65,7 +64,12 @@ public class Server extends UnicastRemoteObject implements Hello {
 
     @Override
     public ArrayList<Vuelo> vuelosDisponibles(String fecha) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return modeloVuelos.vuelosDisponibles(fecha);
+        } catch (SQLException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
@@ -85,7 +89,12 @@ public class Server extends UnicastRemoteObject implements Hello {
 
     @Override
     public ArrayList<Vuelo> vuelosHistoricosPersona(int idPersona) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return modeloVuelos.vuelosHistoricosPersona(idPersona);
+        } catch (SQLException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
@@ -100,7 +109,12 @@ public class Server extends UnicastRemoteObject implements Hello {
 
     @Override
     public ArrayList<Lugar> obtenerLugares() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return modeloVuelos.obtenerLugares();
+        } catch (SQLException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
