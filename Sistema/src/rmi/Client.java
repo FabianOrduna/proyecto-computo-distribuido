@@ -21,11 +21,37 @@ public class Client {
             //Registry registry = LocateRegistry.getRegistry(1010);
             Registry registry = LocateRegistry.getRegistry(host, 1010);
             Hello stub = (Hello) registry.lookup("Hello");
-            System.out.println("Aqui escribe el metodo que quieres probar");
+            System.out.println("Bienvenido al sistema de vuelos de la aerolínea 'Distributed friends'. \n"
+                    + "Este sistema te proporciona datos útiles para localizar vuelos, lugares y personas \n"
+                    + "registradas en el sistema. El menú principal contiene 9 métodos identificados \n"
+                    + "con números: \n" 
+                    + "\n" 
+                    + "1 - Obtener todos los destinos a los cuales viaja la aerolinea \n"
+                    + "    No recibe como entrada ningún parámetro  \n"
+                    + "2 - Obtener todos los pasajeros registrados en un vuelo \n"
+                    + "    Recibe como entrada el id del vuelo a buscar \n"
+                    + "3 - Obtener todos los datos registrados de un vuelo \n"
+                    + "    Recibe como entrada el id del vuelo a buscar \n"
+                    + "4 - Obtener todos los vuelos registrados de un pasajero anteriores a una fecha \n"
+                    + "    Recibe como entrada el id del pasajero y la fecha máxima de viaje\n"
+                    + "5 - Obtener los vuelos disponibles a partir de una fecha\n"
+                    + "    Recibe como entrada la fecha a partir de la cual buscar \n"
+                    + "6 - Obtener los vuelos disponibles a partir de una fecha para un pasajero\n"
+                    + "    Recibe como entrada el id del pasajero y la fecha a partir de la cual buscar \n"
+                    + "7 - Obtener todos los vuelos históricos en la aerolínea\n"
+                    + "    No recibe como entrada ningún parámetro \n"
+                    + "8 - Obtener todos los vuelos históricos para una persona\n"
+                    + "    Recibe como entrada el id del pasajero  \n"
+                    + "9 - Obtener todos los vuelos con un origen y un destino específico\n"
+                    + "    Recibe como entrada el id del lugar de origen y el id del lugar destino\n"
+                    + "\n" 
+                    + "Escribe el número del método a ejecutar seguido de los parámetros indicados:" 
+                    + "");
             
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)); 
             int opcion0, opcion = Integer.parseInt(reader.readLine());
             String cadenaOpcion = "";
+            
             
             try{
                 switch(opcion){
