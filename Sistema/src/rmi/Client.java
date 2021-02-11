@@ -31,6 +31,7 @@ public class Client {
                 switch(opcion){
                     case 1:
                         ArrayList<Lugar> lugares = stub.obtenerLugares();
+                        System.out.println(lugares.toString());
                         break;
                     case 2:
                         System.out.println("Escribe el número de vuelo");
