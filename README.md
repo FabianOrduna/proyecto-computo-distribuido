@@ -1,6 +1,4 @@
-# proyecto-computo-distribuido
-
-Proyecto para la materia de Cómputo Distribuido
+# Proyecto para la materia de Cómputo Distribuido
 
 Maestría en Ciencias en Computación
 
