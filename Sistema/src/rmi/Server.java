@@ -59,7 +59,7 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     @Override
     public ArrayList<Vuelo> vuelosHistoricos() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return modeloVuelos.vuelosHistoricos();
     }
 
     @Override
@@ -85,7 +85,7 @@ public class Server extends UnicastRemoteObject implements Hello {
 
     @Override
     public ArrayList<Persona> obtenerPersonasVuelo(int idVuelo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return modeloVuelos.obtenerPersonasVuelo(idVuelo);
     }
 
     @Override
@@ -96,6 +96,7 @@ public class Server extends UnicastRemoteObject implements Hello {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+        
     }
 
     @Override
@@ -105,7 +106,7 @@ public class Server extends UnicastRemoteObject implements Hello {
 
     @Override
     public ArrayList<Vuelo> vuelosAnterioresPersona(String fecha, int idPersona) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return modeloVuelos.vuelosAnterioresPersona(fecha, idPersona);
     }
 
     @Override
