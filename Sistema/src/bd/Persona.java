@@ -5,6 +5,8 @@
  */
 package bd;
 
+import java.io.Serializable;
+
 /**
  *
  * @author mcc06

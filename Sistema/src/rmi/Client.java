@@ -63,6 +63,7 @@ public class Client {
                         System.out.println("Escribe el número de vuelo");
                         opcion = Integer.parseInt(reader.readLine()); 
                         ArrayList<Persona> personas = stub.obtenerPersonasVuelo(opcion);
+                        System.out.println(personas.toString());
                         break;
                     case 3:
                         System.out.println("Escribe el número de vuelo");
