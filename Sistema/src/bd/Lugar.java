@@ -5,11 +5,13 @@
  */
 package bd;
 
+import java.io.Serializable;
+
 /**
  *
  * @author mcc06
  */
-public class Lugar {
+public class Lugar implements Serializable{
     private int idLugar;
     private String nombre;
 
