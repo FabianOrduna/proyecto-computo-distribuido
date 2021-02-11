@@ -1,0 +1,93 @@
+
+
+--------
+VUELOS DISPONIBLES
+
+SELECT vuelo.id_vuelo, (SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_origen ) as origen, (SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_destino ) as destino, vuelo.fecha
+FROM `vuelo`
+WHERE 1
+
+
+-------
+INFORMACION DE PERSONAS Y VUELOS
+
+SELECT DISTINCT persona.id_persona, persona.nombre, vuelo.id_vuelo, vuelo.fecha, (SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_origen) as origen, (SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_destino) as destino
+FROM persona
+INNER JOIN persona_vuelo
+ON persona_vuelo.id_persona = persona.id_persona
+INNER JOIN vuelo
+ON vuelo.id_vuelo = persona_vuelo.id_vuelo
+
+
+-----
+VUELOS HISTORICOS POR PERSONA
+
+SELECT DISTINCT persona.id_persona, persona.nombre, vuelo.id_vuelo, vuelo.fecha, (SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_origen) as origen, (SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_destino) as destino
+FROM persona
+INNER JOIN persona_vuelo
+ON persona_vuelo.id_persona = persona.id_persona
+INNER JOIN vuelo
+ON vuelo.id_vuelo = persona_vuelo.id_vuelo
+WHERE persona.id_persona = xxxxx
+
+
+------
+VUELOS DESPUES DE CIERTA FECHA PARA ALGUNA PERSONA
+
+SELECT DISTINCT persona.id_persona, persona.nombre, vuelo.id_vuelo, vuelo.fecha, (SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_origen) as origen, (SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_destino) as destino
+FROM persona
+INNER JOIN persona_vuelo
+ON persona_vuelo.id_persona = persona.id_persona
+INNER JOIN vuelo
+ON vuelo.id_vuelo = persona_vuelo.id_vuelo
+WHERE persona.id_persona = xxxxx AND vuelo.fecha >= "YYYY-MM-DD"
+
+
+------
+VUELOS ANTERIORES PARA ALGUNA PERSONA
+
+SELECT DISTINCT persona.id_persona, persona.nombre, vuelo.id_vuelo, vuelo.fecha, (SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_origen) as origen, (SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_destino) as destino
+FROM persona
+INNER JOIN persona_vuelo
+ON persona_vuelo.id_persona = persona.id_persona
+INNER JOIN vuelo
+ON vuelo.id_vuelo = persona_vuelo.id_vuelo
+WHERE persona.id_persona = xxxxx AND vuelo.fecha <= "YYYY-MM-DD"
+
+
+
+----
+PERSONAS QUE VAN EN ALGUN VUELO EN PARTICULAR
+
+SELECT * 
+FROM persona
+WHERE persona.id_persona in (SELECT persona_vuelo.id_persona FROM persona_vuelo WHERE persona_vuelo.id_vuelo = xxx)
+
+
+
+
+-----
+LUGARES A CIERTO DESTINO
+
+SELECT vuelo.id_vuelo, (SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_origen ) as origen, (SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_destino ) as destino, vuelo.fecha
+FROM `vuelo`
+WHERE vuelo.id_destino = XXX
+
+
+-----
+LUGARES DESDE CIERTO ORIGEN
+
+SELECT vuelo.id_vuelo, (SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_origen ) as origen, (SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_destino ) as destino, vuelo.fecha
+FROM `vuelo`
+WHERE vuelo.id_origen = XXX
+
+
+
+
+
+
+
+
+
+
+
