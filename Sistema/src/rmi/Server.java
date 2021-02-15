@@ -9,22 +9,46 @@ import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import seguridad.LlaveServidor;
         
 public class Server extends UnicastRemoteObject implements Hello {
     
     private ModeloAlumno modeloAlumno;
     private ModeloVuelos modeloVuelos;
+    private LlaveServidor llaveServidor;
     
     public Server() throws RemoteException, SQLException{
         this.modeloAlumno = new ModeloAlumno();
         this.modeloVuelos = new ModeloVuelos();
     }
-
+    
+    @Override
+    public byte[] crearLlave(int llaveId) throws RemoteException{
+        try {
+            this.llaveServidor = new LlaveServidor(llaveId);
+        // Alice encodes her public key, and sends it over to Bob.
+            byte[] alicePubKeyEnc = llaveServidor.obtenLlaveInicial();
+            return alicePubKeyEnc;
+        }catch(Exception e){
+            return null;
+        }   
+    }
+    
+    @Override
+    public void coordLlave(byte[] bobPubKeyEnc) throws RemoteException, NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException{
+        llaveServidor.coordinaConCliente(bobPubKeyEnc);
+    }   
+    
     @Override
     public String sayHello(String persona){
         System.out.println("Hora de peticion: "+LocalDateTime.now().toString()+" : "+persona);
@@ -117,6 +141,10 @@ public class Server extends UnicastRemoteObject implements Hello {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+    
+    public String enviarPrueba() throws RemoteException {
+        return "Fabian";
     }
 
     @Override

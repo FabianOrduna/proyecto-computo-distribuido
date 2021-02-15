@@ -10,6 +10,11 @@ import bd.Persona;
 import bd.Vuelo;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -23,6 +28,9 @@ public interface Hello extends Remote{
     int insertaAlumno(String nombre, String paterno, String materno) throws RemoteException;
     int actualizaAlumno(int idAlumno, String nombre, String paterno, String materno) throws RemoteException;
       
+    public byte[] crearLlave(int llaveId) throws RemoteException; //M
+    public void coordLlave(byte[] bobPubKeyEnc) throws RemoteException, NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException;
+    
     public ArrayList<Vuelo> vuelosHistoricos() throws RemoteException; //M
     public ArrayList<Vuelo> vuelosDisponibles(String fecha) throws RemoteException; //S
     public Vuelo obtenerVuelo(int idVuelo) throws RemoteException; //F +

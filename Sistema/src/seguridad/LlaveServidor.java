@@ -72,10 +72,12 @@ public class LlaveServidor {
          */
         this.aliceKeyFac = KeyFactory.getInstance("DH");
         X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(bobPubKeyEnc);
-        this.bobPubKey = aliceKeyFac.generatePublic(x509KeySpec);
+        this.bobPubKey = aliceKeyFac.generatePublic(x509KeySpec); // ver a detalle que hace aqui ¿?
+        
+        
         System.out.println("ALICE: Execute PHASE1 ...");
         this.aliceKeyAgree.doPhase(bobPubKey, true);
-        this.generaLlaveSecreta();
+        this.generaLlaveSecreta(); // es necesario la linea anterior¿?
     }
     
     private byte[] generarSecreto(){
