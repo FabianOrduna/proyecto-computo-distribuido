@@ -81,12 +81,12 @@ public class Cliente {
                         byte[] lugares = stub.obtenerLugares(idLlave, clientPubKeyEnc);
                         System.out.println(llaveCliente.obtenParametrosDeCifrado());
                         byte[] recovered = llaveCliente.decriptaMensaje(lugares, llaveCliente.obtenParametrosDeCifrado());
-                        ByteArrayInputStream in = new ByteArrayInputStream(recovered);
+                        /*ByteArrayInputStream in = new ByteArrayInputStream(recovered);
                         ObjectInputStream is = new ObjectInputStream(in);
                         Object res = (ArrayList) is.readObject();
                         System.out.println(res);
                         ArrayList<Lugar> resultados = (ArrayList<Lugar>) res;       
-                        System.out.println(recovered.toString());
+                        System.out.println(recovered.toString());*/
         
                         break;
                     case 2:
