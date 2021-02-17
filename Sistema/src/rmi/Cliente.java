@@ -79,14 +79,16 @@ public class Cliente {
                 switch(opcion){
                     case 1:
                         byte[] lugares = stub.obtenerLugares(idLlave, clientPubKeyEnc);
-                        System.out.println(llaveCliente.obtenParametrosDeCifrado());
+                        //System.out.println(llaveCliente.obtenParametrosDeCifrado());
                         byte[] recovered = llaveCliente.decriptaMensaje(lugares, llaveCliente.obtenParametrosDeCifrado());
-                        /*ByteArrayInputStream in = new ByteArrayInputStream(recovered);
+         
+                        //falta ver la forma de imprimirlo de forma amigable
+                        /*ByteArrayInputStream in = new ByteArrayInputStream(recovered);  
                         ObjectInputStream is = new ObjectInputStream(in);
                         Object res = (ArrayList) is.readObject();
-                        System.out.println(res);
-                        ArrayList<Lugar> resultados = (ArrayList<Lugar>) res;       
-                        System.out.println(recovered.toString());*/
+                        /*System.out.println(res);
+                        ArrayList<Lugar> resultados = (ArrayList<Lugar>) (res);       
+                        System.out.println(resultados.toString());*/
         
                         break;
                     case 2:
@@ -151,5 +153,51 @@ public class Cliente {
             }
 
             System.out.println("BYE =)");
+    }
+    
+    public static byte[] serizlize(Object object){
+        ObjectOutputStream oos = null;
+        ByteArrayOutputStream baos = null;
+        try {
+            baos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(baos);
+            oos.writeObject(object);
+            byte[] bytes = baos.toByteArray();
+            return bytes;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                if(baos != null){
+                    baos.close();
+                }
+                if (oos != null) {
+                    oos.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+        return null;
+    }
+    
+    public static Object deserialize(byte[] bytes){
+        ByteArrayInputStream bais = null;
+        ObjectInputStream ois = null;
+        try{
+            bais = new ByteArrayInputStream(bytes);
+            ois = new ObjectInputStream(bais);
+            return ois.readObject();
+        }catch(Exception e){
+            System.out.println(e.toString());
+            e.printStackTrace();
+        }finally {
+            try {
+
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+        return null;
     }
 }

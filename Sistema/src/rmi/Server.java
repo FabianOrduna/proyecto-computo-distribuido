@@ -5,8 +5,10 @@ import bd.ModeloAlumno;
 import bd.ModeloVuelos;
 import bd.Persona;
 import bd.Vuelo;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
@@ -72,21 +74,27 @@ public class Server extends UnicastRemoteObject implements Hello {
     }
     
     // Fabian: ayuda :( tiene un arraylist al igual que ArrayList<Vuelo> y nos marca "have the same erasure": 
-    public byte[] converterByte(ArrayList<Persona> objeto, int i) throws RemoteException, SQLException, IOException{ 
+    /*public byte[] converterByte(ArrayList<Persona> objeto, int i) throws RemoteException, SQLException, IOException{ 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream os = new ObjectOutputStream(out);
         os.writeObject(objeto);
         byte[] cleartext = out.toByteArray();
         return cleartext;
-    }
+    }*/
     
     // Fabian: ayuda :( tiene un arraylist al igual que ArrayList<Vuelo> y nos marca "have the same erasure": 
-    public byte[] converterByte(ArrayList<Lugar> objeto, boolean i) throws RemoteException, SQLException, IOException{ 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    public byte[] converterByte(ArrayList<Lugar> objeto, boolean i) { 
+        try{
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+        
         ObjectOutputStream os = new ObjectOutputStream(out);
         os.writeObject(objeto);
         byte[] cleartext = out.toByteArray();
         return cleartext;
+        }catch(Exception e){
+            System.out.println(e.toString());
+            return null;
+        }
     }
     
     @Override
@@ -170,7 +178,8 @@ public class Server extends UnicastRemoteObject implements Hello {
 
     @Override
     public byte[] obtenerPersonasVuelo(int idVuelo, int llaveId, byte[] clientPubKeyEnc) throws SQLException, IOException {
-        return converterByte(modeloVuelos.obtenerPersonasVuelo(idVuelo), 1);
+        //return converterByte(modeloVuelos.obtenerPersonasVuelo(idVuelo), 1);
+        return null;
     }
 
     @Override
@@ -200,7 +209,7 @@ public class Server extends UnicastRemoteObject implements Hello {
             /* metodo listo*/
             ArrayList<Lugar> l = modeloVuelos.obtenerLugares();
             //System.out.println(l.toString());
-            byte [] resParcial = converterByte(l, true);
+            byte [] resParcial = converterByte(l,true);
             byte [] encriptado = this.manejadorLlaves.encripta(clientPubKeyEnc, resParcial);
             System.out.println("Lugares encriptados");
             return encriptado;
@@ -248,7 +257,5 @@ public class Server extends UnicastRemoteObject implements Hello {
         }
     }        
 
-    
-    
     
 }
