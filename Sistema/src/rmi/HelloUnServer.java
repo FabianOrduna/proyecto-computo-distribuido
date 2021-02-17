@@ -25,7 +25,7 @@ import javax.crypto.IllegalBlockSizeException;
  *
  * @author mcc06
  */
-public interface Hello extends Remote{
+public interface HelloUnServer extends Remote{
     String sayHello(String persona) throws RemoteException;
     String sayHello() throws RemoteException;
     int insertaAlumno(String nombre, String paterno, String materno) throws RemoteException;
