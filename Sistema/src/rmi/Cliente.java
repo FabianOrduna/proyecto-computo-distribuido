@@ -32,7 +32,7 @@ import javax.crypto.spec.SecretKeySpec;
  *
  * @author mcc06
  */
-public class LlaveCliente {
+public class Cliente {
     public byte[] llaveInicialServidor;
     //****
     private KeyFactory bobKeyFac;
@@ -47,7 +47,7 @@ public class LlaveCliente {
     
     
     
-    public LlaveCliente(byte[] llaveServidor) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException, NoSuchPaddingException{
+    public Cliente(byte[] llaveServidor) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException, NoSuchPaddingException{
         //System.out.println("Dentro de la clase con FOF");
         this.llaveInicialServidor = llaveServidor;
         /*

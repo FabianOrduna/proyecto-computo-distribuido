@@ -35,8 +35,9 @@ public class LlaveServidor {
     private PublicKey bobPubKey;
     private SecretKeySpec aliceAesKey;
     private AlgorithmParameters aesParams;
+    private Cipher aliceCipher;
     
-    public LlaveServidor(int numeroCoordinacion) throws NoSuchAlgorithmException, InvalidKeyException{
+    public LlaveServidor(int numeroCoordinacion) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException{
         this.numeroCoordinacion = numeroCoordinacion;
         this.llavePrivada = "";
         this.llaveCliente = "";
@@ -56,6 +57,7 @@ public class LlaveServidor {
         
         //algoritmo empleado para la encodeada
         this.aesParams = AlgorithmParameters.getInstance("AES");
+        this.aliceCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");  
     }
     
     public byte[] obtenLlaveInicial(){
@@ -72,10 +74,13 @@ public class LlaveServidor {
          */
         this.aliceKeyFac = KeyFactory.getInstance("DH");
         X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(bobPubKeyEnc);
-        this.bobPubKey = aliceKeyFac.generatePublic(x509KeySpec);
+        this.bobPubKey = aliceKeyFac.generatePublic(x509KeySpec); // ver a detalle que hace aqui ¿?
+        
+        
         System.out.println("ALICE: Execute PHASE1 ...");
         this.aliceKeyAgree.doPhase(bobPubKey, true);
-        this.generaLlaveSecreta();
+        this.generaLlaveSecreta(); 
+        this.aliceCipher.init(Cipher.ENCRYPT_MODE, this.aliceAesKey);
     }
     
     private byte[] generarSecreto(){
@@ -86,8 +91,12 @@ public class LlaveServidor {
         this.aliceAesKey = new SecretKeySpec(this.generarSecreto(), 0, 16, "AES");
     }
     
-    public byte[] encriptaMensaje(Object objeto){
-       return null; 
+    public byte[] encriptaMensaje(byte[] objetoEnBytes) throws IllegalBlockSizeException, BadPaddingException{
+       return aliceCipher.doFinal(objetoEnBytes);
+    }
+    
+    public byte[] obtenParametrosDeCifrado() throws IOException{
+        return aliceCipher.getParameters().getEncoded();
     }
     
     // Instantiate AlgorithmParameters object from parameter encoding
@@ -95,7 +104,6 @@ public class LlaveServidor {
     public byte[] decriptaMensaje(byte[] objetoEncriptado, byte[] encodedParams) throws NoSuchAlgorithmException, IOException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException{
 
         aesParams.init(encodedParams);
-        Cipher aliceCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         aliceCipher.init(Cipher.DECRYPT_MODE, aliceAesKey, aesParams);
         return aliceCipher.doFinal(objetoEncriptado);
     }

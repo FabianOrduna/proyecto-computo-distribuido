@@ -51,9 +51,9 @@ public class ManejadorSeguridad {
         
         
         
-        LlaveServidor llaveServidor = new LlaveServidor(0);
+        // LlaveServidor llaveServidor = new LlaveServidor(0);
         // Alice encodes her public key, and sends it over to Bob.
-        byte[] alicePubKeyEnc = llaveServidor.obtenLlaveInicial();
+        // byte[] alicePubKeyEnc = llaveServidor.obtenLlaveInicial();
         
         
         LlaveCliente llaveCliente = new LlaveCliente(alicePubKeyEnc);

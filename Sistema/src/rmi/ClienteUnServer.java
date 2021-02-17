@@ -52,7 +52,8 @@ public class Client {
             Object res = is.readObject();
             Persona resPersona = (Persona) res;        
             System.out.println(resPersona.toString());
-
+            
+            
             
          } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
