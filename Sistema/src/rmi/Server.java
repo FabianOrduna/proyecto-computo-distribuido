@@ -24,82 +24,127 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
-import seguridad.LlaveServidor;
-        
+import seguridad.LlaveServidor;        
+import seguridad.ManejadorLlaves;
+
 public class Server extends UnicastRemoteObject implements Hello {
     
     private ModeloAlumno modeloAlumno;
     private ModeloVuelos modeloVuelos;
-    private LlaveServidor llaveServidor;
+    private ManejadorLlaves manejadorLlaves;
     
     public Server() throws RemoteException, SQLException{
         this.modeloAlumno = new ModeloAlumno();
         this.modeloVuelos = new ModeloVuelos();
     }
     
-    @Override
-    public byte[] crearLlave(int llaveId) throws RemoteException{
-        try {
-            this.llaveServidor = new LlaveServidor(llaveId);
-            // Alice encodes her public key, and sends it over to Bob.
-            byte[] alicePubKeyEnc = llaveServidor.obtenLlaveInicial();
-            return alicePubKeyEnc;
-        }catch(Exception e){
-            return null;
-        }   
+    public byte[] converterByte(String objeto) throws RemoteException, SQLException, IOException{
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(objeto);
+        byte[] cleartext = out.toByteArray();
+        return cleartext;
+    }
+    
+    public byte[] converterByte(int objeto) throws RemoteException, SQLException, IOException{
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(objeto);
+        byte[] cleartext = out.toByteArray();
+        return cleartext;
+    }
+    
+    public byte[] converterByte(ArrayList<Vuelo> objeto) throws RemoteException, SQLException, IOException{
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(objeto);
+        byte[] cleartext = out.toByteArray();
+        return cleartext;
+    }
+    
+    public byte[] converterByte(Vuelo objeto) throws RemoteException, SQLException, IOException{
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(objeto);
+        byte[] cleartext = out.toByteArray();
+        return cleartext;
+    }
+    
+    // Fabian: ayuda :( tiene un arraylist al igual que ArrayList<Vuelo> y nos marca "have the same erasure": 
+    public byte[] converterByte(ArrayList<Persona> objeto, int i) throws RemoteException, SQLException, IOException{ 
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(objeto);
+        byte[] cleartext = out.toByteArray();
+        return cleartext;
+    }
+    
+    // Fabian: ayuda :( tiene un arraylist al igual que ArrayList<Vuelo> y nos marca "have the same erasure": 
+    public byte[] converterByte(ArrayList<Lugar> objeto, boolean i) throws RemoteException, SQLException, IOException{ 
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(objeto);
+        byte[] cleartext = out.toByteArray();
+        return cleartext;
     }
     
     @Override
-    public byte[] obtenParametrosDeCifrado() throws IOException {
-        return llaveServidor.obtenParametrosDeCifrado();
+    public int crearLlave() throws RemoteException{
+        return manejadorLlaves.crearLlave();
+    }
+    
+    public byte[] obtenerLlave(int llaveId) throws RemoteException{
+        return manejadorLlaves.obtenerLlave(llaveId);
     }
     
     @Override
-    public void coordLlave(byte[] bobPubKeyEnc) throws RemoteException, NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException{
-        llaveServidor.coordinaConCliente(bobPubKeyEnc);
+    public void coordLlave(int llaveId, byte[] clientPubKeyEnc) throws RemoteException, NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException{
+        llaveServidor.coordinaConCliente(clientPubKeyEnc);
     }   
     
     @Override
-    public String sayHello(String persona){
+    public byte[] sayHello(String persona, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException{
         System.out.println("Hora de peticion: "+LocalDateTime.now().toString()+" : "+persona);
-        return "Hello, world! "+persona;
+        String tmp = new String("Hello, world! " + persona);
+        return converterByte(tmp);
     }
     
     @Override
-    public String sayHello(){
+    public byte[] sayHello(int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException{
         System.out.println("Hora de peticion: "+LocalDateTime.now().toString());
-        return "Hello, world! ";
+        String tmp = new String("Hello, world! ");
+        return converterByte(tmp);
     }
     
     @Override
-    public int insertaAlumno(String nombre, String paterno, String materno) throws RemoteException {
+    public byte[] insertaAlumno(String nombre, String paterno, String materno, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, IOException {
         try {
-            return modeloAlumno.insertaAlumno(nombre, paterno, materno);
+            return converterByte(modeloAlumno.insertaAlumno(nombre, paterno, materno));
         } catch (SQLException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-            return 0;
+            return null;
         }
     }
 
     @Override
-    public int actualizaAlumno(int idAlumno, String nombre, String paterno, String materno) throws RemoteException {
+    public byte[] actualizaAlumno(int idAlumno, String nombre, String paterno, String materno, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, IOException {
         try {
-            return modeloAlumno.actualizaAlumno(idAlumno,nombre, paterno, materno);
+            return converterByte(modeloAlumno.actualizaAlumno(idAlumno,nombre, paterno, materno));
         } catch (SQLException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-            return 0;
+            return null;
         }
     }
     
     @Override
-    public ArrayList<Vuelo> vuelosHistoricos() throws RemoteException {
-        return modeloVuelos.vuelosHistoricos();
+    public byte[] vuelosHistoricos(int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException {
+        return converterByte(modeloVuelos.vuelosHistoricos());
     }
 
     @Override
-    public ArrayList<Vuelo> vuelosDisponibles(String fecha) throws RemoteException {
+    public byte[] vuelosDisponibles(String fecha, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, IOException {
         try {
-            return modeloVuelos.vuelosDisponibles(fecha);
+            return converterByte(modeloVuelos.vuelosDisponibles(fecha));
         } catch (SQLException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -107,9 +152,9 @@ public class Server extends UnicastRemoteObject implements Hello {
     }
 
     @Override
-    public Vuelo obtenerVuelo(int idVuelo) throws RemoteException{
+    public byte[] obtenerVuelo(int idVuelo, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, IOException{
         try {
-            return modeloVuelos.obtenVuelo(idVuelo);
+            return converterByte(modeloVuelos.obtenVuelo(idVuelo));
         } catch (SQLException ex) {
             System.out.println(ex.toString());
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
@@ -118,14 +163,14 @@ public class Server extends UnicastRemoteObject implements Hello {
     }
 
     @Override
-    public ArrayList<Persona> obtenerPersonasVuelo(int idVuelo) {
-        return modeloVuelos.obtenerPersonasVuelo(idVuelo);
+    public byte[] obtenerPersonasVuelo(int idVuelo, int llaveId, byte[] clientPubKeyEnc) throws SQLException, IOException {
+        return converterByte(modeloVuelos.obtenerPersonasVuelo(idVuelo), 1);
     }
 
     @Override
-    public ArrayList<Vuelo> vuelosHistoricosPersona(int idPersona) throws RemoteException {
+    public byte[] vuelosHistoricosPersona(int idPersona, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, IOException {
         try {
-            return modeloVuelos.vuelosHistoricosPersona(idPersona);
+            return converterByte(modeloVuelos.vuelosHistoricosPersona(idPersona));
         } catch (SQLException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -134,43 +179,43 @@ public class Server extends UnicastRemoteObject implements Hello {
     }
 
     @Override
-    public ArrayList<Vuelo> vuelosDisponiblesPersona(String fecha, int idPersona) throws RemoteException {
-        return this.modeloVuelos.vuelosDisponiblesPersona(fecha, idPersona);
+    public byte[] vuelosDisponiblesPersona(String fecha, int idPersona, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException {
+        return converterByte(this.modeloVuelos.vuelosDisponiblesPersona(fecha, idPersona));
     }
 
     @Override
-    public ArrayList<Vuelo> vuelosAnterioresPersona(String fecha, int idPersona) throws RemoteException {
-        return modeloVuelos.vuelosAnterioresPersona(fecha, idPersona);
+    public byte[] vuelosAnterioresPersona(String fecha, int idPersona, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException {
+        return converterByte(modeloVuelos.vuelosAnterioresPersona(fecha, idPersona));
     }
 
     @Override
-    public ArrayList<Lugar> obtenerLugares() throws RemoteException {
+    public byte[] obtenerLugares(int llaveId, byte[] clientPubKeyEnc) throws RemoteException, IOException {
         try {
-            return modeloVuelos.obtenerLugares();
+            return converterByte(modeloVuelos.obtenerLugares(), true);
         } catch (SQLException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
     
-    public byte[] enviarPrueba() throws RemoteException, IOException, IllegalBlockSizeException, BadPaddingException {
-        Persona p = new Persona(1,"Fabian");
-        
-        System.out.println(p.toString());
-        
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream os = new ObjectOutputStream(out);
-        os.writeObject(p);
-        
-        byte[] cleartext = out.toByteArray();
-        byte[] ciphertext = llaveServidor.encriptaMensaje(cleartext);
-        
-        return ciphertext;
-    }
+//    public byte[] enviarPrueba() throws RemoteException, IOException, IllegalBlockSizeException, BadPaddingException {
+//        Persona p = new Persona(1,"Fabian");
+//        
+//        System.out.println(p.toString());
+//        
+//        ByteArrayOutputStream out = new ByteArrayOutputStream();
+//        ObjectOutputStream os = new ObjectOutputStream(out);
+//        os.writeObject(p);
+//        
+//        byte[] cleartext = out.toByteArray();
+//        byte[] ciphertext = llaveServidor.encriptaMensaje(cleartext);
+//        
+//        return ciphertext;
+//    }
 
     @Override
-    public ArrayList<Vuelo> vuelosOrigenDestino(int idOrigen, int idDestino) throws RemoteException {
-        return this.modeloVuelos.vuelosOrigenDestino(idOrigen, idDestino);
+    public byte[] vuelosOrigenDestino(int idOrigen, int idDestino, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException {
+        return converterByte(this.modeloVuelos.vuelosOrigenDestino(idOrigen, idDestino));
     }
 
     public static void main(String args[]) {
