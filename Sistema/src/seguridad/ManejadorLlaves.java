@@ -9,8 +9,11 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 /**
@@ -24,6 +27,7 @@ public class ManejadorLlaves {
     public ManejadorLlaves(){
         this.manejadorLlaves = new ArrayList<LlaveServidor>();
         this.totalCreados = 0;
+        this.manejadorLlaves.add(0,null);
     }
     
     /**
@@ -32,7 +36,7 @@ public class ManejadorLlaves {
      * llevarse a cabo los siguientes pasos de coordinación
      * @return indice del arraylist donde se encuentra la llave indicada
      */
-    public int obtenLlavePublica(){
+    public int crearLlave(){
         this.totalCreados++;
         try{
             LlaveServidor ll = new LlaveServidor(this.totalCreados);
@@ -45,7 +49,7 @@ public class ManejadorLlaves {
         }
     }
     
-    public byte[] obtenerLlavePublica(int idLlaveCliente){
+    public byte[] obtenerLlave(int idLlaveCliente){
         if(this.manejadorLlaves.get(idLlaveCliente)!=null){
             return this.manejadorLlaves.get(idLlaveCliente).obtenLlaveInicial();
         }else{
@@ -64,5 +68,29 @@ public class ManejadorLlaves {
         }
         return false;
     }
+    
+    public byte[] encripta(byte[] llavePublicaCliente, byte[] cosa) throws IllegalBlockSizeException, BadPaddingException{
+        //System.out.println("encriptando en el servidor con la llave");
+        return encuentraLlave(llavePublicaCliente).encriptaMensaje(cosa);
+    }
+    
+    private LlaveServidor encuentraLlave(byte[] llavePublica){
+        
+        LlaveServidor temp = null;
+        int indice = 1;
+        boolean encontrado = false;
+        while(indice < this.manejadorLlaves.size() && !encontrado){
+            temp = this.manejadorLlaves.get(indice);
+
+            if(Arrays.equals(temp.getLlavePublicaCliente(), llavePublica)){
+                encontrado=true;
+                System.out.println("Llave encontrada es la: "+indice);
+            }
+            indice++;
+        }
+        System.out.println(temp.toString());
+        return temp;
+    }
+    
     
 }

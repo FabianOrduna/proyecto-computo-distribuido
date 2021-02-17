@@ -26,7 +26,7 @@ public class ClienteUnServer {
             System.setProperty("java.rmi.server.hostname", host);
             //Registry registry = LocateRegistry.getRegistry(1010);
             Registry registry = LocateRegistry.getRegistry(host, 1010);
-            Hello stub = (Hello) registry.lookup("Hello");
+            HelloUnServer stub = (HelloUnServer) registry.lookup("HelloUnServer");
             
             byte[] prueba  = stub.crearLlave(0);
             

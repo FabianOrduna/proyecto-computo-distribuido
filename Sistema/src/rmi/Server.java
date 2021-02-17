@@ -36,6 +36,7 @@ public class Server extends UnicastRemoteObject implements Hello {
     public Server() throws RemoteException, SQLException{
         this.modeloAlumno = new ModeloAlumno();
         this.modeloVuelos = new ModeloVuelos();
+        this.manejadorLlaves = new ManejadorLlaves();
     }
     
     public byte[] converterByte(String objeto) throws RemoteException, SQLException, IOException{
@@ -90,16 +91,21 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     @Override
     public int crearLlave() throws RemoteException{
+        //System.out.println("Creando llave");
         return manejadorLlaves.crearLlave();
     }
     
-    public byte[] obtenerLlave(int llaveId) throws RemoteException{
+    @Override
+    public byte[] obtenLlave(int llaveId) throws RemoteException{
+        //System.out.println("Regresando llave");
+        
         return manejadorLlaves.obtenerLlave(llaveId);
     }
     
     @Override
     public void coordLlave(int llaveId, byte[] clientPubKeyEnc) throws RemoteException, NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException{
-        llaveServidor.coordinaConCliente(clientPubKeyEnc);
+        manejadorLlaves.coordLlave(llaveId,clientPubKeyEnc);
+        //manejadorLlaves.imprimeSecreto(int llaveId);
     }   
     
     @Override
@@ -191,9 +197,15 @@ public class Server extends UnicastRemoteObject implements Hello {
     @Override
     public byte[] obtenerLugares(int llaveId, byte[] clientPubKeyEnc) throws RemoteException, IOException {
         try {
-            return converterByte(modeloVuelos.obtenerLugares(), true);
-        } catch (SQLException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            /* metodo listo*/
+            ArrayList<Lugar> l = modeloVuelos.obtenerLugares();
+            //System.out.println(l.toString());
+            byte [] resParcial = converterByte(l, true);
+            byte [] encriptado = this.manejadorLlaves.encripta(clientPubKeyEnc, resParcial);
+            System.out.println("Lugares encriptados");
+            return encriptado;
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
         }
         return null;
     }
@@ -236,6 +248,7 @@ public class Server extends UnicastRemoteObject implements Hello {
         }
     }        
 
+    
     
     
 }

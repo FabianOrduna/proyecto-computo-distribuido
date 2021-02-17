@@ -24,7 +24,7 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class LlaveServidor {
     private int numeroCoordinacion;
-    private String llaveCliente;
+    private byte[] llaveCliente;
     private String llavePrivada;
     private String llavePublica;
     //**********************
@@ -40,18 +40,18 @@ public class LlaveServidor {
     public LlaveServidor(int numeroCoordinacion) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException{
         this.numeroCoordinacion = numeroCoordinacion;
         this.llavePrivada = "";
-        this.llaveCliente = "";
+        this.llaveCliente = null;
         
         /*
          * Alice creates her own DH key pair with 2048-bit key size
          */
-        System.out.println("ALICE: Generate DH keypair ...");
+        //System.out.println("ALICE: Generate DH keypair ...");
         this.aliceKpairGen = KeyPairGenerator.getInstance("DH");
         this.aliceKpairGen.initialize(2048);
         this.aliceKpair = aliceKpairGen.generateKeyPair();
         
         // Alice creates and initializes her DH KeyAgreement object
-        System.out.println("ALICE: Initialization ...");
+        //System.out.println("ALICE: Initialization ...");
         this.aliceKeyAgree = KeyAgreement.getInstance("DH");
         this.aliceKeyAgree.init(this.aliceKpair.getPrivate());
         
@@ -72,19 +72,31 @@ public class LlaveServidor {
          * Before she can do so, she has to instantiate a DH public key
          * from Bob's encoded key material.
          */
-        this.aliceKeyFac = KeyFactory.getInstance("DH");
-        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(bobPubKeyEnc);
-        this.bobPubKey = aliceKeyFac.generatePublic(x509KeySpec); // ver a detalle que hace aqui ¿?
+        try{
+            this.aliceKeyFac = KeyFactory.getInstance("DH");
+            X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(bobPubKeyEnc);
+            this.bobPubKey = aliceKeyFac.generatePublic(x509KeySpec); // ver a detalle que hace aqui ¿?
+
+
+            //System.out.println("ALICE: Execute PHASE1 ...");
+            this.aliceKeyAgree.doPhase(bobPubKey, true);
+            this.generaLlaveSecreta(); 
+            this.aliceCipher.init(Cipher.ENCRYPT_MODE, this.aliceAesKey);
+            this.llaveCliente = bobPubKeyEnc;
+        }catch(Exception e){
+            System.out.println("Error en Llave servidor - coordina con cliente");
+            System.out.println(e.toString());
+        }
         
-        
-        System.out.println("ALICE: Execute PHASE1 ...");
-        this.aliceKeyAgree.doPhase(bobPubKey, true);
-        this.generaLlaveSecreta(); 
-        this.aliceCipher.init(Cipher.ENCRYPT_MODE, this.aliceAesKey);
     }
     
     private byte[] generarSecreto(){
-        return aliceKeyAgree.generateSecret();
+        byte [] tmp = aliceKeyAgree.generateSecret();
+        //System.out.println("generate secret llave servidor");
+        for(int i=0; i< tmp.length ; i++) {
+         System.out.print(tmp[i] +" ");
+        }
+        return tmp;
     }
     
     private void generaLlaveSecreta(){
@@ -92,7 +104,23 @@ public class LlaveServidor {
     }
     
     public byte[] encriptaMensaje(byte[] objetoEnBytes) throws IllegalBlockSizeException, BadPaddingException{
-       return aliceCipher.doFinal(objetoEnBytes);
+        /*try{
+            System.out.println("Fof en llave servidor");
+        
+        System.out.println(toHexString(this.aliceKeyAgree.generateSecret()));
+        System.out.println("z");
+        }catch(Exception e){
+            System.out.println("Error Llave servidor:");
+            System.out.println(e.toString());
+        }*/
+        try{
+            byte [] tmp = aliceCipher.doFinal(objetoEnBytes);
+            return tmp;
+        }catch(Exception e){
+            System.out.println("Encripta mensaje"); 
+            System.out.println(e.toString());
+        }
+        return null;
     }
     
     public byte[] obtenParametrosDeCifrado() throws IOException{
@@ -106,6 +134,14 @@ public class LlaveServidor {
         aesParams.init(encodedParams);
         aliceCipher.init(Cipher.DECRYPT_MODE, aliceAesKey, aesParams);
         return aliceCipher.doFinal(objetoEncriptado);
+    }
+    
+    public void guardaLlavePublicaCliente(byte[] llaveCliente){
+        this.llaveCliente = llaveCliente;
+    }
+    
+    public byte[] getLlavePublicaCliente(){
+        return this.llaveCliente;
     }
     
     /*
@@ -123,7 +159,7 @@ public class LlaveServidor {
     /*
      * Converts a byte array to hex string
      */
-    private static String toHexString(byte[] block) {
+    public static String toHexString(byte[] block) {
         StringBuffer buf = new StringBuffer();
         int len = block.length;
         for (int i = 0; i < len; i++) {

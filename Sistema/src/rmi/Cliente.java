@@ -5,9 +5,11 @@ import bd.Persona;
 import bd.Vuelo;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -41,7 +43,7 @@ public class Cliente {
         
         stub.coordLlave(idLlave, clientPubKeyEnc);
         llaveCliente.coordinaConServidor();
-        
+        System.out.println("\n");
         System.out.println("Bienvenido al sistema de vuelos de la aerolínea 'Distributed friends'. \n"
                     + "Este sistema te proporciona datos útiles para localizar vuelos, lugares y personas \n"
                     + "registradas en el sistema. El menú principal contiene 9 métodos identificados \n"
@@ -68,7 +70,7 @@ public class Cliente {
                     + "\n" 
                     + "Escribe el número del método a ejecutar seguido de los parámetros indicados:" 
                     + "");
-        
+                
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)); 
         int opcion0, opcion = Integer.parseInt(reader.readLine());
         String cadenaOpcion = "";
@@ -77,7 +79,15 @@ public class Cliente {
                 switch(opcion){
                     case 1:
                         byte[] lugares = stub.obtenerLugares(idLlave, clientPubKeyEnc);
-                        System.out.println(lugares.toString());
+                        System.out.println(llaveCliente.obtenParametrosDeCifrado());
+                        byte[] recovered = llaveCliente.decriptaMensaje(lugares, llaveCliente.obtenParametrosDeCifrado());
+                        ByteArrayInputStream in = new ByteArrayInputStream(recovered);
+                        ObjectInputStream is = new ObjectInputStream(in);
+                        Object res = (ArrayList) is.readObject();
+                        System.out.println(res);
+                        ArrayList<Lugar> resultados = (ArrayList<Lugar>) res;       
+                        System.out.println(recovered.toString());
+        
                         break;
                     case 2:
                         System.out.println("Escribe el número de vuelo");
@@ -136,7 +146,7 @@ public class Cliente {
                         break;
                 }
             }catch(Exception e){
-                System.out.println("Error");
+                System.out.println("Error opciones lciente");
                 System.out.println(e.toString());
             }
 

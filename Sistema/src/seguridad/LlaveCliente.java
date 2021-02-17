@@ -65,12 +65,12 @@ public class LlaveCliente {
          */
         this.dhParamFromAlicePubKey = ((DHPublicKey)this.alicePubKey).getParams();
         // Bob creates his own DH key pair
-        System.out.println("BOB: Generate DH keypair ...");
+        //System.out.println("BOB: Generate DH keypair ...");
         this.bobKpairGen = KeyPairGenerator.getInstance("DH");
         bobKpairGen.initialize(dhParamFromAlicePubKey);
         this.bobKpair = bobKpairGen.generateKeyPair();
         // Bob creates and initializes his DH KeyAgreement object
-        System.out.println("BOB: Initialization ...");
+        //System.out.println("BOB: Initialization ...");
         this.bobKeyAgree = KeyAgreement.getInstance("DH");
         this.bobKeyAgree.init(bobKpair.getPrivate());
         /*
@@ -102,7 +102,12 @@ public class LlaveCliente {
     }
     
     private byte[] generarSecreto(){
-        return bobKeyAgree.generateSecret();
+        byte[] tmp = bobKeyAgree.generateSecret();
+        for(int i=0; i< tmp.length ; i++) {
+         System.out.print(tmp[i] +" ");
+        }
+
+        return tmp;
     }
     
     private void generaLlaveSecreta(){
@@ -117,11 +122,18 @@ public class LlaveCliente {
         return bobCipher.getParameters().getEncoded();
     }
     
-    public byte[] decriptaMensaje(byte[] objetoEncriptado, byte[] encodedParams) throws NoSuchAlgorithmException, IOException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException{
+    public byte[] decriptaMensaje(byte[] objetoEncriptado, byte[] encodedParams) {
        
-        aesParams.init(encodedParams);
+        try{
+            aesParams.init(encodedParams);
         bobCipher.init(Cipher.DECRYPT_MODE, bobAesKey, aesParams);
         return bobCipher.doFinal(objetoEncriptado);
+        }catch(Exception e){
+           System.out.println("Error Llave Cliente:");
+           System.out.println(e.toString());
+        }
+        return null;
+        
     }
     
     /*
