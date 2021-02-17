@@ -5,6 +5,9 @@ import bd.ModeloAlumno;
 import bd.ModeloVuelos;
 import bd.Persona;
 import bd.Vuelo;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
@@ -19,6 +22,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import seguridad.LlaveServidor;
         
 public class Server extends UnicastRemoteObject implements Hello {
@@ -36,12 +41,17 @@ public class Server extends UnicastRemoteObject implements Hello {
     public byte[] crearLlave(int llaveId) throws RemoteException{
         try {
             this.llaveServidor = new LlaveServidor(llaveId);
-        // Alice encodes her public key, and sends it over to Bob.
+            // Alice encodes her public key, and sends it over to Bob.
             byte[] alicePubKeyEnc = llaveServidor.obtenLlaveInicial();
             return alicePubKeyEnc;
         }catch(Exception e){
             return null;
         }   
+    }
+    
+    @Override
+    public byte[] obtenParametrosDeCifrado() throws IOException {
+        return llaveServidor.obtenParametrosDeCifrado();
     }
     
     @Override
@@ -143,8 +153,19 @@ public class Server extends UnicastRemoteObject implements Hello {
         return null;
     }
     
-    public String enviarPrueba() throws RemoteException {
-        return "Fabian";
+    public byte[] enviarPrueba() throws RemoteException, IOException, IllegalBlockSizeException, BadPaddingException {
+        String p = new String("Fabian");
+        
+        System.out.println(p.toString());
+        
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(p);
+        
+        byte[] cleartext = out.toByteArray();
+        byte[] ciphertext = llaveServidor.encriptaMensaje(cleartext);
+        
+        return ciphertext;
     }
 
     @Override
@@ -168,6 +189,8 @@ public class Server extends UnicastRemoteObject implements Hello {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
         }
-    }
+    }        
+
+    
     
 }

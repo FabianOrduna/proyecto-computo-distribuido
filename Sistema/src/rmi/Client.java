@@ -4,7 +4,9 @@ import bd.Lugar;
 import bd.Persona;
 import bd.Vuelo;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
@@ -34,8 +36,23 @@ public class Client {
             
             stub.coordLlave(bobPubKeyEnc);
             llaveCliente.coordinaConServidor();
-       
-            System.out.println(bobPubKeyEnc.toString());
+             
+            byte[] prueba2  = stub.enviarPrueba();
+            byte[] pars  = stub.obtenParametrosDeCifrado();
+            
+            System.out.println(prueba2.toString());
+            System.out.println(pars.toString());
+            
+            byte[] prueba3 = llaveCliente.decriptaMensaje(prueba2, pars);
+            
+            System.out.println(prueba3.toString());
+            
+            ByteArrayInputStream in = new ByteArrayInputStream(prueba3);
+            ObjectInputStream is = new ObjectInputStream(in);
+            Object res = is.readObject();
+            Persona resPersona = (Persona) res;        
+            System.out.println(resPersona.toString());
+
             
          } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());

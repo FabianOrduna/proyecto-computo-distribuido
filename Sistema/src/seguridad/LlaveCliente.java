@@ -8,6 +8,7 @@ package seguridad;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -42,6 +43,8 @@ public class LlaveCliente {
     private KeyPair bobKpair;
     private SecretKeySpec bobAesKey;
     private Cipher bobCipher;
+    private AlgorithmParameters aesParams;
+    
     
     
     public LlaveCliente(byte[] llaveServidor) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException, NoSuchPaddingException{
@@ -73,6 +76,7 @@ public class LlaveCliente {
         /*
          * Bob encrypts, using AES in CBC mode
          */
+        this.aesParams = AlgorithmParameters.getInstance("AES");
         this.bobCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");  
     }
     
@@ -113,8 +117,11 @@ public class LlaveCliente {
         return bobCipher.getParameters().getEncoded();
     }
     
-    public byte[] decriptaMensaje(Object objeto){
-       return null; 
+    public byte[] decriptaMensaje(byte[] objetoEncriptado, byte[] encodedParams) throws NoSuchAlgorithmException, IOException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException{
+       
+        aesParams.init(encodedParams);
+        bobCipher.init(Cipher.DECRYPT_MODE, bobAesKey, aesParams);
+        return bobCipher.doFinal(objetoEncriptado);
     }
     
     /*
