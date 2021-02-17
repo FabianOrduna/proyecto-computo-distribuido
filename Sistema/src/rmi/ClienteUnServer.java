@@ -12,9 +12,9 @@ import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import seguridad.LlaveCliente;
 
-public class Client {
+public class ClienteUnServer {
 
-    private Client() {}
+    private ClienteUnServer() {}
 
     public static void main(String[] args) {
 

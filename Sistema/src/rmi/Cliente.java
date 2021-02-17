@@ -1,153 +1,188 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package seguridad;
+package rmi;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.security.AlgorithmParameters;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyAgreement;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.ShortBufferException;
-import javax.crypto.interfaces.DHPublicKey;
-import javax.crypto.spec.DHParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
+import bd.Lugar;
+import bd.Persona;
+import bd.Vuelo;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.ArrayList;
+import seguridad.LlaveCliente;
 
-/**
- *
- * @author mcc06
- */
 public class Cliente {
-    public byte[] llaveInicialServidor;
-    //****
-    private KeyFactory bobKeyFac;
-    private PublicKey alicePubKey;
-    private DHParameterSpec dhParamFromAlicePubKey;
-    private KeyPairGenerator bobKpairGen;
-    private KeyAgreement bobKeyAgree;
-    private KeyPair bobKpair;
-    private SecretKeySpec bobAesKey;
-    private Cipher bobCipher;
-    private AlgorithmParameters aesParams;
-    
-    
-    
-    public Cliente(byte[] llaveServidor) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException, NoSuchPaddingException{
-        //System.out.println("Dentro de la clase con FOF");
-        this.llaveInicialServidor = llaveServidor;
-        /*
-         * Let's turn over to Bob. Bob has received Alice's public key
-         * in encoded format.
-         * He instantiates a DH public key from the encoded key material.
-         */
-        this.bobKeyFac = KeyFactory.getInstance("DH");
-        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(llaveServidor);  
-        this.alicePubKey = bobKeyFac.generatePublic(x509KeySpec);
-        /*
-         * Bob gets the DH parameters associated with Alice's public key.
-         * He must use the same parameters when he generates his own key
-         * pair.
-         */
-        this.dhParamFromAlicePubKey = ((DHPublicKey)this.alicePubKey).getParams();
-        // Bob creates his own DH key pair
-        System.out.println("BOB: Generate DH keypair ...");
-        this.bobKpairGen = KeyPairGenerator.getInstance("DH");
-        bobKpairGen.initialize(dhParamFromAlicePubKey);
-        this.bobKpair = bobKpairGen.generateKeyPair();
-        // Bob creates and initializes his DH KeyAgreement object
-        System.out.println("BOB: Initialization ...");
-        this.bobKeyAgree = KeyAgreement.getInstance("DH");
-        this.bobKeyAgree.init(bobKpair.getPrivate());
-        /*
-         * Bob encrypts, using AES in CBC mode
-         */
-        this.aesParams = AlgorithmParameters.getInstance("AES");
-        this.bobCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");  
-    }
-    
-    // Bob encodes his public key, and sends it over to Alice.
-    public byte[] obtenLlave(){
-        return this.bobKpair.getPublic().getEncoded();
-    }
-    
-    public void coordinaConServidor() throws InvalidKeyException{
-        /*
-         * Bob uses Alice's public key for the first (and only) phase
-         * of his version of the DH
-         * protocol.
-         */
-        System.out.println("BOB: Execute PHASE1 ...");
-        bobKeyAgree.doPhase(this.alicePubKey, true);
-        this.generaLlaveSecreta();
-        this.bobCipher.init(Cipher.ENCRYPT_MODE, this.bobAesKey);
-    }
-    
-    public int longitudSecreto(byte[] bobSharedSecret) throws IllegalStateException, ShortBufferException{
-        return bobKeyAgree.generateSecret(bobSharedSecret, 0);
-    }
-    
-    private byte[] generarSecreto(){
-        return bobKeyAgree.generateSecret();
-    }
-    
-    private void generaLlaveSecreta(){
-        this.bobAesKey = new SecretKeySpec(this.generarSecreto(), 0, 16, "AES");
-    }
-    
-    public byte[] encriptaMensaje(byte[] objetoEnBytes) throws IllegalBlockSizeException, BadPaddingException {
-       return bobCipher.doFinal(objetoEnBytes);
-    }
-    
-    public byte[] obtenParametrosDeCifrado() throws IOException{
-        return bobCipher.getParameters().getEncoded();
-    }
-    
-    public byte[] decriptaMensaje(byte[] objetoEncriptado, byte[] encodedParams) throws NoSuchAlgorithmException, IOException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException{
-       
-        aesParams.init(encodedParams);
-        bobCipher.init(Cipher.DECRYPT_MODE, bobAesKey, aesParams);
-        return bobCipher.doFinal(objetoEncriptado);
-    }
-    
-    /*
-     * Converts a byte to hex digit and writes to the supplied buffer
-     */
-    private static void byte2hex(byte b, StringBuffer buf) {
-        char[] hexChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8',
-                '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-        int high = ((b & 0xf0) >> 4);
-        int low = (b & 0x0f);
-        buf.append(hexChars[high]);
-        buf.append(hexChars[low]);
-    }
 
-    /*
-     * Converts a byte array to hex string
-     */
-    private static String toHexString(byte[] block) {
-        StringBuffer buf = new StringBuffer();
-        int len = block.length;
-        for (int i = 0; i < len; i++) {
-            byte2hex(block[i], buf);
-            if (i < len-1) {
-                buf.append(":");
-            }
+    private Cliente() {}
+
+    public static void main(String[] args) {
+
+        //String host = (args.length < 1) ? "148.205.36.206" : args[0];
+        
+        String host = (args.length < 1) ? "localhost" : args[0];
+        
+        try {
+            System.setProperty("java.rmi.server.hostname", host);
+            //Registry registry = LocateRegistry.getRegistry(1010);
+            Registry registry = LocateRegistry.getRegistry(host, 1010);
+            Hello stub = (Hello) registry.lookup("Hello");
+            
+            byte[] prueba  = stub.crearLlave(0);
+            
+            LlaveCliente llaveCliente = new LlaveCliente(prueba);
+            // Bob encodes his public key, and sends it over to Alice.
+            byte[] bobPubKeyEnc = llaveCliente.obtenLlave();
+            
+            stub.coordLlave(bobPubKeyEnc);
+            llaveCliente.coordinaConServidor();
+             
+            byte[] prueba2  = stub.enviarPrueba();
+            byte[] pars  = stub.obtenParametrosDeCifrado();
+            
+            System.out.println(prueba2.toString());
+            System.out.println(pars.toString());
+            
+            byte[] prueba3 = llaveCliente.decriptaMensaje(prueba2, pars);
+            
+            System.out.println(prueba3.toString());
+            
+            ByteArrayInputStream in = new ByteArrayInputStream(prueba3);
+            ObjectInputStream is = new ObjectInputStream(in);
+            Object res = is.readObject();
+            Persona resPersona = (Persona) res;        
+            System.out.println(resPersona.toString());
+            
+            
+            
+         } catch (Exception e) {
+            System.err.println("Client exception: " + e.toString());
+            e.printStackTrace();
         }
-        return buf.toString();
-    }    
+            
+            
+        
+           
+        
+        
+        
+//        
+//        try {
+//            System.setProperty("java.rmi.server.hostname", host);
+//            //Registry registry = LocateRegistry.getRegistry(1010);
+//            Registry registry = LocateRegistry.getRegistry(host, 1010);
+//            Hello stub = (Hello) registry.lookup("Hello");
+//            System.out.println("Bienvenido al sistema de vuelos de la aerolínea 'Distributed friends'. \n"
+//                    + "Este sistema te proporciona datos útiles para localizar vuelos, lugares y personas \n"
+//                    + "registradas en el sistema. El menú principal contiene 9 métodos identificados \n"
+//                    + "con números: \n" 
+//                    + "\n" 
+//                    + "1 - Obtener todos los destinos a los cuales viaja la aerolinea \n"
+//                    + "    No recibe como entrada ningún parámetro  \n"
+//                    + "2 - Obtener todos los pasajeros registrados en un vuelo \n"
+//                    + "    Recibe como entrada el id del vuelo a buscar \n"
+//                    + "3 - Obtener todos los datos registrados de un vuelo \n"
+//                    + "    Recibe como entrada el id del vuelo a buscar \n"
+//                    + "4 - Obtener todos los vuelos registrados de un pasajero anteriores a una fecha \n"
+//                    + "    Recibe como entrada el id del pasajero y la fecha máxima de viaje\n"
+//                    + "5 - Obtener los vuelos disponibles a partir de una fecha\n"
+//                    + "    Recibe como entrada la fecha a partir de la cual buscar \n"
+//                    + "6 - Obtener los vuelos disponibles a partir de una fecha para un pasajero\n"
+//                    + "    Recibe como entrada el id del pasajero y la fecha a partir de la cual buscar \n"
+//                    + "7 - Obtener todos los vuelos históricos en la aerolínea\n"
+//                    + "    No recibe como entrada ningún parámetro \n"
+//                    + "8 - Obtener todos los vuelos históricos para una persona\n"
+//                    + "    Recibe como entrada el id del pasajero  \n"
+//                    + "9 - Obtener todos los vuelos con un origen y un destino específico\n"
+//                    + "    Recibe como entrada el id del lugar de origen y el id del lugar destino\n"
+//                    + "\n" 
+//                    + "Escribe el número del método a ejecutar seguido de los parámetros indicados:" 
+//                    + "");
+//            
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)); 
+//            int opcion0, opcion = Integer.parseInt(reader.readLine());
+//            String cadenaOpcion = "";
+//            
+//            
+//            try{
+//                switch(opcion){
+//                    case 1:
+//                        ArrayList<Lugar> lugares = stub.obtenerLugares();
+//                        System.out.println(lugares.toString());
+//                        break;
+//                    case 2:
+//                        System.out.println("Escribe el número de vuelo");
+//                        opcion = Integer.parseInt(reader.readLine()); 
+//                        ArrayList<Persona> personas = stub.obtenerPersonasVuelo(opcion);
+//                        System.out.println(personas.toString());
+//                        break;
+//                    case 3:
+//                        System.out.println("Escribe el número de vuelo");
+//                        opcion = Integer.parseInt(reader.readLine()); 
+//                        Vuelo vuelo = stub.obtenerVuelo(opcion);
+//                        System.out.println(vuelo.toString());
+//                        break;
+//                    case 4:
+//                        System.out.println("Escribe el id de la persona");
+//                        opcion = Integer.parseInt(reader.readLine()); 
+//                        System.out.println("Escribe la fecha");
+//                        cadenaOpcion = reader.readLine(); 
+//                        ArrayList<Vuelo> vuelosAntPersona = stub.vuelosAnterioresPersona(cadenaOpcion, opcion);
+//                        System.out.println(vuelosAntPersona.toString());
+//                        break;
+//                    case 5:
+//                        System.out.println("Escribe la fecha (aaaa-mm-dd)");
+//                        cadenaOpcion = reader.readLine();
+//                        ArrayList<Vuelo> vuelosDisp = stub.vuelosDisponibles(cadenaOpcion);
+//                        System.out.println(vuelosDisp.toString());
+//                        break;
+//                    case 6:
+//                        System.out.println("Escribe el id de la persona");
+//                        opcion = Integer.parseInt(reader.readLine()); 
+//                        System.out.println("Escribe la fecha");
+//                        cadenaOpcion = reader.readLine(); 
+//                        ArrayList<Vuelo> vuelosPersona = stub.vuelosDisponiblesPersona(cadenaOpcion, opcion);
+//                        System.out.println(vuelosPersona.toString());
+//                        break;
+//                    case 7:
+//                        ArrayList<Vuelo> vuelosHist = stub.vuelosHistoricos();
+//                        System.out.println(vuelosHist.toString());
+//                        break;
+//                    case 8:
+//                        System.out.println("Escribe el id de la persona");
+//                        opcion = Integer.parseInt(reader.readLine()); 
+//                        ArrayList<Vuelo> vuelosHistPersona = stub.vuelosHistoricosPersona(opcion);
+//                        System.out.println(vuelosHistPersona.toString());
+//                        break;
+//                    case 9:
+//                        System.out.println("Escribe el id del origen");
+//                        opcion = Integer.parseInt(reader.readLine()); 
+//                        System.out.println("Escribe el id del destino");
+//                        opcion0 = Integer.parseInt(reader.readLine()); 
+//                        ArrayList<Vuelo> vuelosOrigenDestino =stub.vuelosOrigenDestino(opcion, opcion0);
+//                        System.out.println(vuelosOrigenDestino.toString());
+//                        break;
+//                    default:
+//                        System.out.println("Opción no encontrada");
+//                        break;
+//                }
+//            }catch(Exception e){
+//                System.out.println("Error");
+//                System.out.println(e.toString());
+//            }
+//            
+//            
+//            
+//            
+//            System.out.println("BYE =)");
+//            
+//            
+//            
+//            
+//            
+//        } catch (Exception e) {
+//            System.err.println("Client exception: " + e.toString());
+//            e.printStackTrace();
+//        }
+    }
 }

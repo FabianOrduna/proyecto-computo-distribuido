@@ -26,13 +26,13 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import seguridad.LlaveServidor;
         
-public class Server extends UnicastRemoteObject implements Hello {
+public class ServerUnServer extends UnicastRemoteObject implements Hello {
     
     private ModeloAlumno modeloAlumno;
     private ModeloVuelos modeloVuelos;
     private LlaveServidor llaveServidor;
     
-    public Server() throws RemoteException, SQLException{
+    public ServerUnServer() throws RemoteException, SQLException{
         this.modeloAlumno = new ModeloAlumno();
         this.modeloVuelos = new ModeloVuelos();
     }
