@@ -79,16 +79,20 @@ public class Cliente {
                 switch(opcion){
                     case 1:
                         byte[] lugares = stub.obtenerLugares(idLlave, clientPubKeyEnc);
-                        //System.out.println(llaveCliente.obtenParametrosDeCifrado());
-                        byte[] recovered = llaveCliente.decriptaMensaje(lugares, llaveCliente.obtenParametrosDeCifrado());
-         
+                        byte[] pars  = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
+                        byte[] recovered = llaveCliente.decriptaMensaje(lugares, pars);
+                        
+                        System.out.println(recovered.toString());
+                        
                         //falta ver la forma de imprimirlo de forma amigable
-                        /*ByteArrayInputStream in = new ByteArrayInputStream(recovered);  
+                        ByteArrayInputStream in = new ByteArrayInputStream(recovered);
                         ObjectInputStream is = new ObjectInputStream(in);
-                        Object res = (ArrayList) is.readObject();
-                        /*System.out.println(res);
-                        ArrayList<Lugar> resultados = (ArrayList<Lugar>) (res);       
-                        System.out.println(resultados.toString());*/
+                        Object res = is.readObject();
+                        
+                        System.out.println(res.toString());
+                        
+                        ArrayList resultados = (ArrayList) res;       
+                        System.out.println(resultados.toString());
         
                         break;
                     case 2:
@@ -98,11 +102,27 @@ public class Cliente {
                         System.out.println(personas.toString());
                         break;
                     case 3:
-                        System.out.println("Escribe el número de vuelo");
-                        opcion = Integer.parseInt(reader.readLine()); 
-                        byte[] vuelo = stub.obtenerVuelo(opcion, idLlave, clientPubKeyEnc);
-                        System.out.println(vuelo.toString());
+                        
+                        //byte[] test = stub.obtenerVuelo(3, idLlave, clientPubKeyEnc);
+                        
+                        //byte[] recovered = llaveCliente.decriptaMensaje(test, pars);
+
+//                        System.out.println(test.toString());
+//                        System.out.println(recovered.toString());
+//                        
+//                        //falta ver la forma de imprimirlo de forma amigable
+//                        ByteArrayInputStream in = new ByteArrayInputStream(recovered);
+//                        ObjectInputStream is = new ObjectInputStream(in);
+//                        Object res = is.readObject();
+//                        
+//                        System.out.println(res.toString());
+//                        Vuelo resPersona = (Vuelo) res;                                
+//                        System.out.println(resPersona.toString());
+            
+                        
+                        
                         break;
+                        
                     case 4:
                         System.out.println("Escribe el id de la persona");
                         opcion = Integer.parseInt(reader.readLine()); 

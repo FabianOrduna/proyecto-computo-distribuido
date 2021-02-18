@@ -40,7 +40,7 @@ public interface Hello extends Remote{
     byte[] actualizaAlumno(int idAlumno, String nombre, String paterno, String materno, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException;
 
     // public byte[] enviarPrueba(byte[] clientPubKeyEnc) throws RemoteException, IOException, IllegalBlockSizeException, BadPaddingException;
-    
+    public byte[] obtenParametrosDeCifrado(int llaveId, byte[] clientPubKeyEnc) throws IOException;
     public byte[] vuelosHistoricos(int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException; //M
     public byte[] vuelosDisponibles(String fecha, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException; //S
     public byte[] obtenerVuelo(int idVuelo, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException; //F +

@@ -5,6 +5,7 @@
  */
 package seguridad;
 
+import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -52,6 +53,14 @@ public class ManejadorLlaves {
     public byte[] obtenerLlave(int idLlaveCliente){
         if(this.manejadorLlaves.get(idLlaveCliente)!=null){
             return this.manejadorLlaves.get(idLlaveCliente).obtenLlaveInicial();
+        }else{
+            return null;
+        }   
+    }
+    
+    public byte[] obtenParametrosDeCifrado(int idLlaveCliente) throws IOException{
+        if(this.manejadorLlaves.get(idLlaveCliente)!=null){
+            return this.manejadorLlaves.get(idLlaveCliente).obtenParametrosDeCifrado();
         }else{
             return null;
         }   

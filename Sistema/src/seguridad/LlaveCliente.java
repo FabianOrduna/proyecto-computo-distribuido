@@ -45,8 +45,6 @@ public class LlaveCliente {
     private Cipher bobCipher;
     private AlgorithmParameters aesParams;
     
-    
-    
     public LlaveCliente(byte[] llaveServidor) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException, NoSuchPaddingException{
         //System.out.println("Dentro de la clase con FOF");
         this.llaveInicialServidor = llaveServidor;
@@ -126,7 +124,7 @@ public class LlaveCliente {
        
         try{
             aesParams.init(encodedParams);
-        bobCipher.init(Cipher.DECRYPT_MODE, bobAesKey, aesParams);
+            bobCipher.init(Cipher.DECRYPT_MODE, bobAesKey, aesParams);
         return bobCipher.doFinal(objetoEncriptado);
         }catch(Exception e){
            System.out.println("Error Llave Cliente:");

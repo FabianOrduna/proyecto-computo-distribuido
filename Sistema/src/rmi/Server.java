@@ -85,8 +85,8 @@ public class Server extends UnicastRemoteObject implements Hello {
     // Fabian: ayuda :( tiene un arraylist al igual que ArrayList<Vuelo> y nos marca "have the same erasure": 
     public byte[] converterByte(ArrayList<Lugar> objeto, boolean i) { 
         try{
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
         
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream os = new ObjectOutputStream(out);
         os.writeObject(objeto);
         byte[] cleartext = out.toByteArray();
@@ -168,14 +168,30 @@ public class Server extends UnicastRemoteObject implements Hello {
     @Override
     public byte[] obtenerVuelo(int idVuelo, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, IOException{
         try {
-            return converterByte(modeloVuelos.obtenVuelo(idVuelo));
+            
+            Vuelo l = modeloVuelos.obtenVuelo(idVuelo);
+            //System.out.println(l.toString());
+            byte [] resParcial = converterByte(l);
+            byte [] encriptado = this.manejadorLlaves.encripta(clientPubKeyEnc, resParcial);
+            System.out.println("Lugares encriptados");
+            return encriptado;
         } catch (SQLException ex) {
             System.out.println(ex.toString());
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
 
+    public byte[] obtenParametrosDeCifrado(int llaveId, byte[] clientPubKeyEnc) throws IOException{
+        return manejadorLlaves.obtenParametrosDeCifrado(llaveId);
+    }
+    
+    
+    
     @Override
     public byte[] obtenerPersonasVuelo(int idVuelo, int llaveId, byte[] clientPubKeyEnc) throws SQLException, IOException {
         //return converterByte(modeloVuelos.obtenerPersonasVuelo(idVuelo), 1);
@@ -255,7 +271,5 @@ public class Server extends UnicastRemoteObject implements Hello {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
         }
-    }        
-
-    
+    }            
 }
