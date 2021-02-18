@@ -394,4 +394,41 @@ public class Server extends UnicastRemoteObject implements Hello {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public byte[] vuelosAnterioresPersona(byte[] fecha, byte[] idPersona, int llaveId, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) throws RemoteException, SQLException, IOException {
+        int tmpIdVuelo = 1;
+        String tmpFecha = "2020-01-01";
+        System.out.println("");
+        try {
+            tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idPersona, paramsEncriptClient)).getInt();
+            System.out.println("Vuelo descifrado: "+tmpIdVuelo);
+            
+            tmpFecha = new String(this.manejadorLlaves.desencripta(clientPubKeyEnc, fecha, paramsEncriptClient));
+            //aqui ya se busca el metodo
+            
+            System.out.println("Fecha descifrada: "+tmpFecha);
+            
+            
+            ArrayList l = modeloVuelos.vuelosAnterioresPersona(tmpFecha, tmpIdVuelo);
+            System.out.println(l.toString());
+            
+            //*************************************************
+            byte [] resParcial = serializa(l);
+            System.out.println("Despues de serializar");
+            byte [] encriptado = this.manejadorLlaves.encripta(clientPubKeyEnc, resParcial);
+            System.out.println("Desués del enctiptado");
+            //*************************************************
+
+            return encriptado;
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
+        return null;
+    
+    
+    
+    
+    
+    }
+
 }

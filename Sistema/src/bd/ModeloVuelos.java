@@ -170,9 +170,9 @@ public class ModeloVuelos {
         String sql = "SELECT DISTINCT persona.id_persona, persona.nombre, vuelo.id_vuelo, vuelo.fecha,"
                 + "(SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_origen) as origen,"
                 + "(SELECT lugar.nombre FROM lugar WHERE lugar.id_lugar = vuelo.id_destino) as destino"
-                + "FROM persona INNER JOIN persona_vuelo ON persona_vuelo.id_persona = persona.id_persona"
-                + "INNER JOIN vuelo ON vuelo.id_vuelo = persona_vuelo.id_vuelo WHERE persona.id_persona = ?"
-                + "AND vuelo.fecha <= ?";
+                + " FROM persona INNER JOIN persona_vuelo ON persona_vuelo.id_persona = persona.id_persona"
+                + " INNER JOIN vuelo ON vuelo.id_vuelo = persona_vuelo.id_vuelo WHERE persona.id_persona = ?"
+                + " AND vuelo.fecha <= ?";
         ResultSet resultado;
         Vuelo v;
         try{

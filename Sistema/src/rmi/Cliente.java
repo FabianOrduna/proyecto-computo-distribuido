@@ -83,7 +83,7 @@ public class Cliente {
         byte[] personas;
         Vuelo vueloC;
         byte[] vuelo;
-        byte[] parametroAMandar;
+        byte[] parametroAMandar,parametroAMandarStr;
         
             try{
                 switch(opcion){
@@ -122,11 +122,19 @@ public class Cliente {
                         break;
                         
                     case 4: //si necesita mandar parámetros
-                        System.out.println("Escribe el id de la persona");
-                        opcion = Integer.parseInt(reader.readLine()); 
+                         
+                         
+                        
+                        System.out.println("Escribe el número de vuelo");
+                        opcion = Integer.parseInt(reader.readLine());
+                        parametroAMandar = llaveCliente.encriptaMensaje(ByteBuffer.allocate(4).putInt(opcion).array());
+                        
                         System.out.println("Escribe la fecha");
-                        cadenaOpcion = reader.readLine(); 
-                        byte[] vuelosAntPersona = stub.vuelosAnterioresPersona(cadenaOpcion, opcion, idLlave, clientPubKeyEnc);
+                        cadenaOpcion = reader.readLine();
+                        parametroAMandarStr = llaveCliente.encriptaMensaje(cadenaOpcion.getBytes());
+                        
+                        
+                        byte[] vuelosAntPersona = stub.vuelosAnterioresPersona(parametroAMandarStr, parametroAMandar, idLlave, clientPubKeyEnc,llaveCliente.obtenParametrosDeCifrado());
                         pars  = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
                         recovered = llaveCliente.decriptaMensaje(vuelosAntPersona, pars);
                         arregloRes = (ArrayList) deserialize(recovered);

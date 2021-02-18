@@ -119,12 +119,21 @@ public class LlaveServidor {
     public byte[] decriptaMensaje(byte[] objetoEncriptado, byte[] encodedParams) {
        
         try{
+            
             aesParams.init(encodedParams);
-            aliceCipher.init(Cipher.DECRYPT_MODE, aliceAesKey, aesParams);
-        return aliceCipher.doFinal(objetoEncriptado);
+            
+            
         }catch(Exception e){
            System.out.println("Error Llave Cliente:");
            System.out.println(e.toString());
+        }
+        
+        try{
+            aliceCipher.init(Cipher.DECRYPT_MODE, aliceAesKey, aesParams);
+            return aliceCipher.doFinal(objetoEncriptado);
+        }catch(Exception e){
+            System.out.println(e.toString());
+            e.fillInStackTrace();
         }
         return null;
         
