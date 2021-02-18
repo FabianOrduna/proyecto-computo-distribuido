@@ -100,9 +100,7 @@ public class Cliente {
                         parametroAMandar = llaveCliente.encriptaMensaje(ByteBuffer.allocate(4).putInt(opcion).array());
                         //personas = stub.obtenerPersonasVuelo(opcion, idLlave, clientPubKeyEnc);
                         personas = stub.obtenerPersonasVuelo(parametroAMandar, idLlave, clientPubKeyEnc, llaveCliente.obtenParametrosDeCifrado());
-                        
-                        
-                        
+
                         pars  = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
                         recovered = llaveCliente.decriptaMensaje(personas, pars);
                         arregloRes = (ArrayList) deserialize(recovered);       
@@ -112,8 +110,10 @@ public class Cliente {
                     case 3: //si necesita mandar parámetros
                         
                         System.out.println("Escribe el número de vuelo");
-                        opcion = Integer.parseInt(reader.readLine()); 
-                        vuelo = stub.obtenerPersonasVuelo(opcion, idLlave, clientPubKeyEnc);
+                        opcion = Integer.parseInt(reader.readLine());
+                        parametroAMandar = llaveCliente.encriptaMensaje(ByteBuffer.allocate(4).putInt(opcion).array());
+
+                        vuelo = stub.obtenerPersonasVuelo(parametroAMandar, idLlave, clientPubKeyEnc,llaveCliente.obtenParametrosDeCifrado());
                         pars  = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
                         recovered = llaveCliente.decriptaMensaje(vuelo, pars);
                         arregloRes = (ArrayList) deserialize(recovered);
