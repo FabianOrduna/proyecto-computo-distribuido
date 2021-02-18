@@ -74,53 +74,44 @@ public class Cliente {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)); 
         int opcion0, opcion = Integer.parseInt(reader.readLine());
         String cadenaOpcion = "";
-                
+            
+        ArrayList arregloRes;
+        byte[] pars;
+        byte[] recovered;
+        byte[] lugares;
+        byte[] personas;
+        Vuelo vueloC;
+        byte[] vuelo;
+        
             try{
                 switch(opcion){
                     case 1:
-                        byte[] lugares = stub.obtenerLugares(idLlave, clientPubKeyEnc);
-                        byte[] pars  = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
-                        byte[] recovered = llaveCliente.decriptaMensaje(lugares, pars);
-                        
-                        System.out.println(recovered.toString());
-                        
-                        //falta ver la forma de imprimirlo de forma amigable
-                        ByteArrayInputStream in = new ByteArrayInputStream(recovered);
-                        ObjectInputStream is = new ObjectInputStream(in);
-                        Object res = is.readObject();
-                        
-                        System.out.println(res.toString());
-                        
-                        ArrayList resultados = (ArrayList) res;       
-                        System.out.println(resultados.toString());
-        
+                        lugares = stub.obtenerLugares(idLlave, clientPubKeyEnc);
+                        pars = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
+                        recovered = llaveCliente.decriptaMensaje(lugares, pars);
+                        arregloRes = (ArrayList) deserialize(recovered);       
+                        System.out.println(arregloRes.toString());
                         break;
                     case 2:
                         System.out.println("Escribe el número de vuelo");
                         opcion = Integer.parseInt(reader.readLine()); 
-                        byte[] personas = stub.obtenerPersonasVuelo(opcion, idLlave, clientPubKeyEnc);
-                        System.out.println(personas.toString());
+                        personas = stub.obtenerPersonasVuelo(opcion, idLlave, clientPubKeyEnc);
+                        pars  = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
+                        recovered = llaveCliente.decriptaMensaje(personas, pars);
+                        arregloRes = (ArrayList) deserialize(recovered);       
+                        System.out.println(arregloRes.toString());
+
                         break;
                     case 3:
                         
-                        //byte[] test = stub.obtenerVuelo(3, idLlave, clientPubKeyEnc);
-                        
-                        //byte[] recovered = llaveCliente.decriptaMensaje(test, pars);
-
-//                        System.out.println(test.toString());
-//                        System.out.println(recovered.toString());
-//                        
-//                        //falta ver la forma de imprimirlo de forma amigable
-//                        ByteArrayInputStream in = new ByteArrayInputStream(recovered);
-//                        ObjectInputStream is = new ObjectInputStream(in);
-//                        Object res = is.readObject();
-//                        
-//                        System.out.println(res.toString());
-//                        Vuelo resPersona = (Vuelo) res;                                
-//                        System.out.println(resPersona.toString());
-            
-                        
-                        
+                        System.out.println("Escribe el número de vuelo");
+                        opcion = Integer.parseInt(reader.readLine()); 
+                        vuelo = stub.obtenerPersonasVuelo(opcion, idLlave, clientPubKeyEnc);
+                        pars  = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
+                        recovered = llaveCliente.decriptaMensaje(vuelo, pars);
+                        arregloRes = (ArrayList) deserialize(recovered);
+                        System.out.println(arregloRes.toString());
+              
                         break;
                         
                     case 4:
@@ -129,13 +120,20 @@ public class Cliente {
                         System.out.println("Escribe la fecha");
                         cadenaOpcion = reader.readLine(); 
                         byte[] vuelosAntPersona = stub.vuelosAnterioresPersona(cadenaOpcion, opcion, idLlave, clientPubKeyEnc);
-                        System.out.println(vuelosAntPersona.toString());
+                        pars  = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
+                        recovered = llaveCliente.decriptaMensaje(vuelosAntPersona, pars);
+                        arregloRes = (ArrayList) deserialize(recovered);
+                        System.out.println(arregloRes.toString());
+  
                         break;
                     case 5:
                         System.out.println("Escribe la fecha (aaaa-mm-dd)");
                         cadenaOpcion = reader.readLine();
                         byte[] vuelosDisp = stub.vuelosDisponibles(cadenaOpcion, idLlave, clientPubKeyEnc);
-                        System.out.println(vuelosDisp.toString());
+                        pars  = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
+                        recovered = llaveCliente.decriptaMensaje(vuelosDisp, pars);
+                        arregloRes = (ArrayList) deserialize(recovered);
+                        System.out.println(arregloRes.toString());
                         break;
                     case 6:
                         System.out.println("Escribe el id de la persona");
@@ -143,17 +141,26 @@ public class Cliente {
                         System.out.println("Escribe la fecha");
                         cadenaOpcion = reader.readLine(); 
                         byte[] vuelosPersona = stub.vuelosDisponiblesPersona(cadenaOpcion, opcion, idLlave, clientPubKeyEnc);
-                        System.out.println(vuelosPersona.toString());
+                        pars  = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
+                        recovered = llaveCliente.decriptaMensaje(vuelosPersona, pars);
+                        arregloRes = (ArrayList) deserialize(recovered);
+                        System.out.println(arregloRes.toString());
                         break;
                     case 7:
                         byte[] vuelosHist = stub.vuelosHistoricos(idLlave, clientPubKeyEnc);
-                        System.out.println(vuelosHist.toString());
+                        pars  = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
+                        recovered = llaveCliente.decriptaMensaje(vuelosHist, pars);
+                        arregloRes = (ArrayList) deserialize(recovered);
+                        System.out.println(arregloRes.toString());
                         break;
                     case 8:
                         System.out.println("Escribe el id de la persona");
                         opcion = Integer.parseInt(reader.readLine()); 
                         byte[] vuelosHistPersona = stub.vuelosHistoricosPersona(opcion, idLlave, clientPubKeyEnc);
-                        System.out.println(vuelosHistPersona.toString());
+                        pars  = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
+                        recovered = llaveCliente.decriptaMensaje(vuelosHistPersona, pars);
+                        arregloRes = (ArrayList) deserialize(recovered);
+                        System.out.println(arregloRes.toString());
                         break;
                     case 9:
                         System.out.println("Escribe el id del origen");
@@ -161,7 +168,10 @@ public class Cliente {
                         System.out.println("Escribe el id del destino");
                         opcion0 = Integer.parseInt(reader.readLine()); 
                         byte[] vuelosOrigenDestino =stub.vuelosOrigenDestino(opcion, opcion0, idLlave, clientPubKeyEnc);
-                        System.out.println(vuelosOrigenDestino.toString());
+                        pars  = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
+                        recovered = llaveCliente.decriptaMensaje(vuelosOrigenDestino, pars);
+                        arregloRes = (ArrayList) deserialize(recovered);
+                        System.out.println(arregloRes.toString());    
                         break;
                     default:
                         System.out.println("Opción no encontrada");

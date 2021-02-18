@@ -97,6 +97,20 @@ public class Server extends UnicastRemoteObject implements Hello {
         }
     }
     
+    public byte[] serializa(Object objeto) { 
+        try{
+        
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(objeto);
+        byte[] cleartext = out.toByteArray();
+        return cleartext;
+        }catch(Exception e){
+            System.out.println(e.toString());
+            return null;
+        }
+    }
+    
     @Override
     public int crearLlave() throws RemoteException{
         //System.out.println("Creando llave");
@@ -152,17 +166,35 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     @Override
     public byte[] vuelosHistoricos(int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException {
-        return converterByte(modeloVuelos.vuelosHistoricos());
+        try {
+            /* metodo listo*/
+            ArrayList<Vuelo> l = modeloVuelos.vuelosHistoricos();
+            //System.out.println(l.toString());
+            byte [] resParcial = serializa(l);
+            byte [] encriptado = this.manejadorLlaves.encripta(clientPubKeyEnc, resParcial);
+            System.out.println("Vuelos encriptados históricos");
+            return encriptado;
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
+        return null;
     }
 
     @Override
     public byte[] vuelosDisponibles(String fecha, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, IOException {
+        
         try {
-            return converterByte(modeloVuelos.vuelosDisponibles(fecha));
-        } catch (SQLException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            /* metodo listo*/
+            ArrayList<Vuelo> l = modeloVuelos.vuelosDisponibles(fecha);
+            //System.out.println(l.toString());
+            byte [] resParcial = serializa(l);
+            byte [] encriptado = this.manejadorLlaves.encripta(clientPubKeyEnc, resParcial);
+            System.out.println("Vuelos encriptados");
+            return encriptado;
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
         }
-        return null;
+        return null;     
     }
 
     @Override
@@ -194,29 +226,73 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     @Override
     public byte[] obtenerPersonasVuelo(int idVuelo, int llaveId, byte[] clientPubKeyEnc) throws SQLException, IOException {
-        //return converterByte(modeloVuelos.obtenerPersonasVuelo(idVuelo), 1);
-        return null;
-    }
-
-    @Override
-    public byte[] vuelosHistoricosPersona(int idPersona, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, IOException {
+        
         try {
-            return converterByte(modeloVuelos.vuelosHistoricosPersona(idPersona));
-        } catch (SQLException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            /* metodo listo*/
+            ArrayList<Persona> l = modeloVuelos.obtenerPersonasVuelo(idVuelo);
+            //System.out.println(l.toString());
+            byte [] resParcial = serializa(l);
+            byte [] encriptado = this.manejadorLlaves.encripta(clientPubKeyEnc, resParcial);
+            System.out.println("Personas encriptados");
+            return encriptado;
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
         }
         return null;
         
     }
 
     @Override
+    public byte[] vuelosHistoricosPersona(int idPersona, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, IOException {
+        
+        try {
+            /* metodo listo*/
+            ArrayList<Vuelo> l = modeloVuelos.vuelosHistoricosPersona(idPersona);
+            //System.out.println(l.toString());
+            byte [] resParcial = serializa(l);
+            byte [] encriptado = this.manejadorLlaves.encripta(clientPubKeyEnc, resParcial);
+            System.out.println("Vuelos históricos por persona");
+            return encriptado;
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
+        return null;
+                
+    }
+
+    @Override
     public byte[] vuelosDisponiblesPersona(String fecha, int idPersona, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException {
-        return converterByte(this.modeloVuelos.vuelosDisponiblesPersona(fecha, idPersona));
+        
+        try {
+            /* metodo listo*/
+            ArrayList<Vuelo> l = this.modeloVuelos.vuelosDisponiblesPersona(fecha, idPersona);
+            //System.out.println(l.toString());
+            byte [] resParcial = serializa(l);
+            byte [] encriptado = this.manejadorLlaves.encripta(clientPubKeyEnc, resParcial);
+            System.out.println("Vuelos encriptados por persona");
+            return encriptado;
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
+        return null;
+ 
     }
 
     @Override
     public byte[] vuelosAnterioresPersona(String fecha, int idPersona, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException {
-        return converterByte(modeloVuelos.vuelosAnterioresPersona(fecha, idPersona));
+        try {
+            /* metodo listo*/
+            ArrayList<Vuelo> l = modeloVuelos.vuelosAnterioresPersona(fecha, idPersona);
+            //System.out.println(l.toString());
+            byte [] resParcial = serializa(l);
+            byte [] encriptado = this.manejadorLlaves.encripta(clientPubKeyEnc, resParcial);
+            System.out.println("Vuelos persona encriptados");
+            return encriptado;
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
+        return null;
+        
     }
 
     @Override
@@ -252,7 +328,19 @@ public class Server extends UnicastRemoteObject implements Hello {
 
     @Override
     public byte[] vuelosOrigenDestino(int idOrigen, int idDestino, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException {
-        return converterByte(this.modeloVuelos.vuelosOrigenDestino(idOrigen, idDestino));
+       
+        try {
+            /* metodo listo*/
+            ArrayList<Vuelo> l = this.modeloVuelos.vuelosOrigenDestino(idOrigen, idDestino);
+            //System.out.println(l.toString());
+            byte [] resParcial = serializa(l);
+            byte [] encriptado = this.manejadorLlaves.encripta(clientPubKeyEnc, resParcial);
+            System.out.println("Vuelos Origen Destino");
+            return encriptado;
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
+        return null;
     }
 
     public static void main(String args[]) {
