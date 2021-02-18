@@ -45,6 +45,9 @@ public interface Hello extends Remote{
     public byte[] vuelosDisponibles(String fecha, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException; //S
     public byte[] obtenerVuelo(int idVuelo, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException; //F +
     public byte[] obtenerPersonasVuelo(int idVuelo, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException; //M
+    public byte[] obtenerPersonasVuelo(byte[] idVuelo, int llaveId, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) throws RemoteException, SQLException, IOException; //M
+    
+    public byte[] obtenerPersonasVuelo(byte[] idVuelo, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException; //M
     public byte[] vuelosHistoricosPersona(int idPersona, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException; //S
     public byte[] vuelosDisponiblesPersona(String fecha, int idPersona, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException; //F +
     public byte[] vuelosAnterioresPersona(String fecha, int idPersona, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException; //M

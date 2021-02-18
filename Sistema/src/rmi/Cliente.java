@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -82,27 +83,33 @@ public class Cliente {
         byte[] personas;
         Vuelo vueloC;
         byte[] vuelo;
+        byte[] parametroAMandar;
         
             try{
                 switch(opcion){
-                    case 1:
+                    case 1: //no necesita mandar parámetros
                         lugares = stub.obtenerLugares(idLlave, clientPubKeyEnc);
                         pars = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
                         recovered = llaveCliente.decriptaMensaje(lugares, pars);
                         arregloRes = (ArrayList) deserialize(recovered);       
                         System.out.println(arregloRes.toString());
                         break;
-                    case 2:
+                    case 2: //si necesita mandar parámetros
                         System.out.println("Escribe el número de vuelo");
-                        opcion = Integer.parseInt(reader.readLine()); 
-                        personas = stub.obtenerPersonasVuelo(opcion, idLlave, clientPubKeyEnc);
+                        opcion = Integer.parseInt(reader.readLine());
+                        parametroAMandar = llaveCliente.encriptaMensaje(ByteBuffer.allocate(4).putInt(opcion).array());
+                        //personas = stub.obtenerPersonasVuelo(opcion, idLlave, clientPubKeyEnc);
+                        personas = stub.obtenerPersonasVuelo(parametroAMandar, idLlave, clientPubKeyEnc, llaveCliente.obtenParametrosDeCifrado());
+                        
+                        
+                        
                         pars  = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
                         recovered = llaveCliente.decriptaMensaje(personas, pars);
                         arregloRes = (ArrayList) deserialize(recovered);       
                         System.out.println(arregloRes.toString());
 
                         break;
-                    case 3:
+                    case 3: //si necesita mandar parámetros
                         
                         System.out.println("Escribe el número de vuelo");
                         opcion = Integer.parseInt(reader.readLine()); 
@@ -114,7 +121,7 @@ public class Cliente {
               
                         break;
                         
-                    case 4:
+                    case 4: //si necesita mandar parámetros
                         System.out.println("Escribe el id de la persona");
                         opcion = Integer.parseInt(reader.readLine()); 
                         System.out.println("Escribe la fecha");
@@ -126,7 +133,7 @@ public class Cliente {
                         System.out.println(arregloRes.toString());
   
                         break;
-                    case 5:
+                    case 5: //si necesita mandar parámetros
                         System.out.println("Escribe la fecha (aaaa-mm-dd)");
                         cadenaOpcion = reader.readLine();
                         byte[] vuelosDisp = stub.vuelosDisponibles(cadenaOpcion, idLlave, clientPubKeyEnc);
@@ -135,7 +142,7 @@ public class Cliente {
                         arregloRes = (ArrayList) deserialize(recovered);
                         System.out.println(arregloRes.toString());
                         break;
-                    case 6:
+                    case 6: //si necesita mandar parámetros
                         System.out.println("Escribe el id de la persona");
                         opcion = Integer.parseInt(reader.readLine()); 
                         System.out.println("Escribe la fecha");
@@ -153,7 +160,7 @@ public class Cliente {
                         arregloRes = (ArrayList) deserialize(recovered);
                         System.out.println(arregloRes.toString());
                         break;
-                    case 8:
+                    case 8: //si necesita mandar parámetros
                         System.out.println("Escribe el id de la persona");
                         opcion = Integer.parseInt(reader.readLine()); 
                         byte[] vuelosHistPersona = stub.vuelosHistoricosPersona(opcion, idLlave, clientPubKeyEnc);
@@ -162,7 +169,7 @@ public class Cliente {
                         arregloRes = (ArrayList) deserialize(recovered);
                         System.out.println(arregloRes.toString());
                         break;
-                    case 9:
+                    case 9: //si necesita mandar parámetros
                         System.out.println("Escribe el id del origen");
                         opcion = Integer.parseInt(reader.readLine()); 
                         System.out.println("Escribe el id del destino");
@@ -180,6 +187,7 @@ public class Cliente {
             }catch(Exception e){
                 System.out.println("Error opciones lciente");
                 System.out.println(e.toString());
+                e.getStackTrace();
             }
 
             System.out.println("BYE =)");

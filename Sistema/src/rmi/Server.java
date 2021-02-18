@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
@@ -360,4 +361,37 @@ public class Server extends UnicastRemoteObject implements Hello {
             e.printStackTrace();
         }
     }            
+
+    //para los parámetros mandados por el cliente
+    public byte[] obtenerPersonasVuelo(byte[] idVuelo, int llaveId, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) throws RemoteException, SQLException, IOException {
+        int tmpIdVuelo = 0;
+        System.out.println("Parametro de entrada: ");
+        System.out.println(idVuelo);
+        try {
+            tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
+            System.out.println("IdVuelo-Fof "+tmpIdVuelo);
+            System.out.println("Fin de desencripcion");
+            //aqui ya se busca el metodo
+            ArrayList l = modeloVuelos.obtenerPersonasVuelo(tmpIdVuelo);
+            System.out.println(l.toString());
+            
+            //*************************************************
+            byte [] resParcial = serializa(l);
+            System.out.println("Despues de serializar");
+            byte [] encriptado = this.manejadorLlaves.encripta(clientPubKeyEnc, resParcial);
+            System.out.println("Desués del enctiptado");
+            //*************************************************
+
+            return encriptado;
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
+        return null;
+    }
+
+    @Override
+    public byte[] obtenerPersonasVuelo(byte[] idVuelo, int llaveId, byte[] clientPubKeyEnc) throws RemoteException, SQLException, IOException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

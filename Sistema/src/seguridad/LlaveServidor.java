@@ -104,15 +104,7 @@ public class LlaveServidor {
     }
     
     public byte[] encriptaMensaje(byte[] objetoEnBytes) throws IllegalBlockSizeException, BadPaddingException{
-        /*try{
-            System.out.println("Fof en llave servidor");
         
-        System.out.println(toHexString(this.aliceKeyAgree.generateSecret()));
-        System.out.println("z");
-        }catch(Exception e){
-            System.out.println("Error Llave servidor:");
-            System.out.println(e.toString());
-        }*/
         try{
             byte [] tmp = aliceCipher.doFinal(objetoEnBytes);
             return tmp;
@@ -123,19 +115,26 @@ public class LlaveServidor {
         return null;
     }
     
+    public byte[] decriptaMensaje(byte[] objetoEncriptado, byte[] encodedParams) {
+       
+        try{
+            aesParams.init(encodedParams);
+            aliceCipher.init(Cipher.DECRYPT_MODE, aliceAesKey, aesParams);
+        return aliceCipher.doFinal(objetoEncriptado);
+        }catch(Exception e){
+           System.out.println("Error Llave Cliente:");
+           System.out.println(e.toString());
+        }
+        return null;
+        
+    }
+    
+    
+    
     public byte[] obtenParametrosDeCifrado() throws IOException{
         return aliceCipher.getParameters().getEncoded();
     }
-    
-    // Instantiate AlgorithmParameters object from parameter encoding
-    // obtained from Bob
-    public byte[] decriptaMensaje(byte[] objetoEncriptado, byte[] encodedParams) throws NoSuchAlgorithmException, IOException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException{
-
-        aesParams.init(encodedParams);
-        aliceCipher.init(Cipher.DECRYPT_MODE, aliceAesKey, aesParams);
-        return aliceCipher.doFinal(objetoEncriptado);
-    }
-    
+        
     public void guardaLlavePublicaCliente(byte[] llaveCliente){
         this.llaveCliente = llaveCliente;
     }

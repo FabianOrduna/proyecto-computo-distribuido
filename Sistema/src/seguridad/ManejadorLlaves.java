@@ -83,6 +83,11 @@ public class ManejadorLlaves {
         return encuentraLlave(llavePublicaCliente).encriptaMensaje(cosa);
     }
     
+    public byte[] desencripta(byte[] llavePublicaCliente, byte[] cosa, byte[] paramsEncriptadoCliente) throws IllegalBlockSizeException, BadPaddingException{
+        //System.out.println("encriptando en el servidor con la llave");
+        return encuentraLlave(llavePublicaCliente).decriptaMensaje(cosa, paramsEncriptadoCliente);
+    }
+    
     private LlaveServidor encuentraLlave(byte[] llavePublica){
         
         LlaveServidor temp = null;
