@@ -106,6 +106,7 @@ public class LlaveServidor {
     public byte[] encriptaMensaje(byte[] objetoEnBytes) throws IllegalBlockSizeException, BadPaddingException{
         
         try{
+            aliceCipher.init(Cipher.ENCRYPT_MODE, aliceAesKey, aesParams);
             byte [] tmp = aliceCipher.doFinal(objetoEnBytes);
             return tmp;
         }catch(Exception e){
