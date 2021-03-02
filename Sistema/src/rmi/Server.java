@@ -424,11 +424,7 @@ public class Server extends UnicastRemoteObject implements Hello {
             System.out.println(ex.toString());
         }
         return null;
-    
-    
-    
-    
-    
+        
     }
 
 }
