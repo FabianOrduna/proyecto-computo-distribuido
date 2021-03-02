@@ -124,6 +124,53 @@ public class Server extends UnicastRemoteObject implements Hello {
         return null;
     }
 
+      
+
+    @Override
+    public void multiplicaX(byte[] idVuelo, int idLlave, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) {
+        System.out.println("Operacion de suma recibida en el servidor");
+        int tmpIdVuelo = 0;
+        System.out.println("Parametro de entrada: ");
+        System.out.println(idVuelo);
+        try {
+            tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
+            System.out.println("Número a sumar a Y:"+tmpIdVuelo);
+            System.out.println("Fin de desencripcion");
+            this.y *= tmpIdVuelo;
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
+    }
+
+    @Override
+    public void multiplicaY(byte[] idVuelo, int idLlave, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) {
+        System.out.println("Operacion de suma recibida en el servidor");
+        int tmpIdVuelo = 0;
+        System.out.println("Parametro de entrada: ");
+        System.out.println(idVuelo);
+        try {
+            tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
+            System.out.println("Número a sumar a Y:"+tmpIdVuelo);
+            System.out.println("Fin de desencripcion");
+            this.y *= tmpIdVuelo;
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public static void main(String args[]) {
         try {
             Server obj = new Server();
@@ -134,6 +181,8 @@ public class Server extends UnicastRemoteObject implements Hello {
             System.err.println("Server exception no funcionó: " + e.toString());
             e.printStackTrace();
         }
-    }   
-
+    } 
+    
+    
+    
 }

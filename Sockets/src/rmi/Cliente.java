@@ -92,6 +92,20 @@ public class Cliente {
                     System.out.println("El valor de Y es: "+val);
                     val = 0;
                     break;
+                    
+                case 5: //si necesita mandar parámetros
+                    System.out.println("Escribe el número que le quieres sumar a X");
+                    opcion = Integer.parseInt(reader.readLine());
+                    parametroAMandar = llaveCliente.encriptaMensaje(ByteBuffer.allocate(4).putInt(opcion).array());
+                    stub.multiplicaX(parametroAMandar, idLlave, clientPubKeyEnc,llaveCliente.obtenParametrosDeCifrado());
+                    break;
+                
+                case 6: //si necesita mandar parámetros
+                    System.out.println("Escribe el número que le quieres sumar a X");
+                    opcion = Integer.parseInt(reader.readLine());
+                    parametroAMandar = llaveCliente.encriptaMensaje(ByteBuffer.allocate(4).putInt(opcion).array());
+                    stub.multiplicaY(parametroAMandar, idLlave, clientPubKeyEnc,llaveCliente.obtenParametrosDeCifrado());
+                    break;
 
                 default:
                     System.out.println("Opción no encontrada");
