@@ -16,13 +16,13 @@ import java.util.logging.Logger;
  */
 public class Cliente {
     // inicializar las entradas y salidas
-    private Socket socket = null;
+    private Nodo socket = null;
     private DataInputStream in = null;
     private DataOutputStream out = null;
 
     public Cliente(String ip, int puerto) {
         try{
-            socket = new Socket(ip, puerto);
+            socket = new Nodo(ip, puerto);
             System.out.println("Ya me conecté");
             
             // recibe entrada de la terminal

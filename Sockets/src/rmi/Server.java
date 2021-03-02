@@ -12,24 +12,25 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;     
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
 import seguridad.ManejadorLlaves;
+import sockets.ColaDePrioridad;
 
 public class Server extends UnicastRemoteObject implements Hello {
     
     private ManejadorLlaves manejadorLlaves;
+    private static int reloj;
     private static int x;
     private static int y;
+    private  ColaDePrioridad LOG;
     
     public Server() throws RemoteException, SQLException{
 
         this.manejadorLlaves = new ManejadorLlaves();
+        this.reloj = 1;
         this.x = 0;
         this.y = 0;
+        this.LOG = new ColaDePrioridad();
+        
     }
     
     public byte[] serializa(Object objeto) { 
@@ -81,6 +82,7 @@ public class Server extends UnicastRemoteObject implements Hello {
             System.out.println("Número a sumar a X:"+tmpIdVuelo);
             System.out.println("Fin de desencripcion");
             this.x += tmpIdVuelo;
+            this.reloj ++;
         } catch (Exception ex) {
             System.out.println(ex.toString());
         }
@@ -97,6 +99,7 @@ public class Server extends UnicastRemoteObject implements Hello {
             System.out.println("Número a sumar a Y:"+tmpIdVuelo);
             System.out.println("Fin de desencripcion");
             this.y += tmpIdVuelo;
+            this.reloj ++;
         } catch (Exception ex) {
             System.out.println(ex.toString());
         }
@@ -137,6 +140,7 @@ public class Server extends UnicastRemoteObject implements Hello {
             System.out.println("Número a sumar a Y:"+tmpIdVuelo);
             System.out.println("Fin de desencripcion");
             this.y *= tmpIdVuelo;
+            this.reloj ++;
         } catch (Exception ex) {
             System.out.println(ex.toString());
         }
@@ -153,6 +157,7 @@ public class Server extends UnicastRemoteObject implements Hello {
             System.out.println("Número a sumar a Y:"+tmpIdVuelo);
             System.out.println("Fin de desencripcion");
             this.y *= tmpIdVuelo;
+            this.reloj ++;
         } catch (Exception ex) {
             System.out.println(ex.toString());
         }

@@ -19,7 +19,7 @@ import org.json.JSONObject;
 public class Servidor {
     
     // inicialiar sockt y entrada
-    private Socket socket = null;
+    private Nodo socket = null;
     private ServerSocket servidor = null;
     private DataInputStream in = null;
     
