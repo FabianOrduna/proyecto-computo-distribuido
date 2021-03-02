@@ -13,15 +13,23 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;     
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import seguridad.ManejadorLlaves;
 
 public class Server extends UnicastRemoteObject implements Hello {
     
     private ManejadorLlaves manejadorLlaves;
+    private static int x;
+    private static int y;
     
     public Server() throws RemoteException, SQLException{
 
         this.manejadorLlaves = new ManejadorLlaves();
+        this.x = 0;
+        this.y = 0;
     }
     
     public byte[] serializa(Object objeto) { 
@@ -63,9 +71,8 @@ public class Server extends UnicastRemoteObject implements Hello {
     }    
     
     @Override
-    public byte[] sumaX(byte[] idVuelo, int llaveId, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) throws RemoteException, SQLException, IOException {
+    public void sumaX(byte[] idVuelo, int llaveId, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) throws RemoteException, SQLException, IOException {
         System.out.println("Operacion de suma recibida en el servidor");
-        
         int tmpIdVuelo = 0;
         System.out.println("Parametro de entrada: ");
         System.out.println(idVuelo);
@@ -73,17 +80,50 @@ public class Server extends UnicastRemoteObject implements Hello {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
             System.out.println("Número a sumar a X:"+tmpIdVuelo);
             System.out.println("Fin de desencripcion");
-            
-            
-            
+            this.x += tmpIdVuelo;
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
+    }
+    
+    @Override
+    public void sumaY(byte[] idVuelo, int llaveId, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) throws RemoteException, SQLException, IOException {
+        System.out.println("Operacion de suma recibida en el servidor");
+        int tmpIdVuelo = 0;
+        System.out.println("Parametro de entrada: ");
+        System.out.println(idVuelo);
+        try {
+            tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
+            System.out.println("Número a sumar a Y:"+tmpIdVuelo);
+            System.out.println("Fin de desencripcion");
+            this.y += tmpIdVuelo;
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
+    }
 
-            return null;
+    @Override
+    public byte[] getX(byte[] clientPubKeyEnc){
+        byte[] tmp = ByteBuffer.allocate(4).putInt(this.x).array();
+        try {
+            return this.manejadorLlaves.encripta(clientPubKeyEnc, tmp);
         } catch (Exception ex) {
             System.out.println(ex.toString());
         }
         return null;
     }
-    
+
+     @Override
+    public byte[] getY(byte[] clientPubKeyEnc){
+        byte[] tmp = ByteBuffer.allocate(4).putInt(this.y).array();
+        try {
+            return this.manejadorLlaves.encripta(clientPubKeyEnc, tmp);
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
+        return null;
+    }
+
     public static void main(String args[]) {
         try {
             Server obj = new Server();
@@ -91,11 +131,9 @@ public class Server extends UnicastRemoteObject implements Hello {
             registry.bind("Hello", obj);
             System.out.println("Server ready");
         } catch (Exception e) {
-            System.err.println("Server exception: " + e.toString());
+            System.err.println("Server exception no funcionó: " + e.toString());
             e.printStackTrace();
         }
-    }
-
-    
+    }   
 
 }

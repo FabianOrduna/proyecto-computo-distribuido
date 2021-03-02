@@ -42,37 +42,55 @@ public class Cliente {
         System.out.println("\n");
         System.out.println("Bienvenido al sistema de números\n"
                     + "Este sistema te proporciona sumas y multiplicaciones distribuidas y coordinadas\n"
-                    + "Opcion 1"
+                    + "Opcion 1: Sumarle a X"
+                    + "Opcion 2: Sumarle a Y"
+                    + "Opcion 3: Obtener X"
+                    + "Opcion 4: Obtener Y"
                     );
                 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)); 
         int opcion = Integer.parseInt(reader.readLine());
             
-        ArrayList arregloRes;
-        byte[] pars;
         byte[] recovered;
-        byte[] vuelo;
+        byte[] pars;
+        byte[] res;
+        int val = 0;
+
         byte[] parametroAMandar;
         
         try{
             switch(opcion){
 
                 case 1: //si necesita mandar parámetros
-
                     System.out.println("Escribe el número que le quieres sumar a X");
                     opcion = Integer.parseInt(reader.readLine());
                     parametroAMandar = llaveCliente.encriptaMensaje(ByteBuffer.allocate(4).putInt(opcion).array());
-
-                    vuelo = stub.sumaX(parametroAMandar, idLlave, clientPubKeyEnc,llaveCliente.obtenParametrosDeCifrado());
-                    if(vuelo != null){
-                        pars  = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
-                        recovered = llaveCliente.decriptaMensaje(vuelo, pars);
-                        System.out.println("El servidor no regresó respuesta");
-                        arregloRes = (ArrayList) deserialize(recovered);
-                        System.out.println(arregloRes.toString());
-                    }
+                    stub.sumaX(parametroAMandar, idLlave, clientPubKeyEnc,llaveCliente.obtenParametrosDeCifrado());
+                    break;
+                
+                case 2: //si necesita mandar parámetros
+                    System.out.println("Escribe el número que le quieres sumar a X");
+                    opcion = Integer.parseInt(reader.readLine());
+                    parametroAMandar = llaveCliente.encriptaMensaje(ByteBuffer.allocate(4).putInt(opcion).array());
+                    stub.sumaY(parametroAMandar, idLlave, clientPubKeyEnc,llaveCliente.obtenParametrosDeCifrado());
+                    break;
                     
-
+                case 3: //si necesita mandar parámetros
+                    res = stub.getX(llaveCliente.obtenParametrosDeCifrado());
+                    pars = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
+                    recovered = llaveCliente.decriptaMensaje(res, pars);
+                    val = ByteBuffer.wrap(recovered).getInt();
+                    System.out.println("El valor de X es: "+val);
+                    val = 0;
+                    break;
+                    
+                case 4: //si necesita mandar parámetros
+                    res = stub.getY(llaveCliente.obtenParametrosDeCifrado());
+                    pars = stub.obtenParametrosDeCifrado(idLlave, clientPubKeyEnc);
+                    recovered = llaveCliente.decriptaMensaje(res, pars);
+                    val = ByteBuffer.wrap(recovered).getInt();
+                    System.out.println("El valor de Y es: "+val);
+                    val = 0;
                     break;
 
                 default:
