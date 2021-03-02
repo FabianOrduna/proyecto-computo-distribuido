@@ -1,4 +1,4 @@
-package pruebasockets;
+package sockets;
 /**
  *
  * @author mcc06
