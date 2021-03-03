@@ -27,7 +27,7 @@ import sockets.ManejadorSockets;
 public class Server extends UnicastRemoteObject implements Hello {
     
     private ManejadorLlaves manejadorLlaves;
-    private static int reloj;
+    private int reloj;
     private int x;
     private int y;
     public static ColaDePrioridad LOG = new ColaDePrioridad();
@@ -35,7 +35,7 @@ public class Server extends UnicastRemoteObject implements Hello {
     private ManejadorSockets manejadorServidores;
     
     
-    public Server(int identificador) throws RemoteException, SQLException, AlreadyBoundException, IOException{
+    public Server(int identificador) throws RemoteException, SQLException, AlreadyBoundException{
 
         this.manejadorLlaves = new ManejadorLlaves();
         this.reloj = 1;
@@ -98,11 +98,10 @@ public class Server extends UnicastRemoteObject implements Hello {
             
             inst = new ClaseInstrucciones(this.identificador,  this.reloj,  1,  tmpIdVuelo);
             LOG.agregaInstruccion(inst);
-            this.reloj ++;
             this.manejadorServidores.mandaInstrucciones(inst);
             
             this.x+=tmpIdVuelo;
-            
+            this.reloj ++;
         } catch (Exception ex) {
             System.out.println(ex.toString());
         }
@@ -110,7 +109,6 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     @Override
     public void sumaY(byte[] idVuelo, int llaveId, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) throws RemoteException, SQLException, IOException {
-        ClaseInstrucciones inst;
         System.out.println("Operacion de suma recibida en el servidor");
         int tmpIdVuelo = 0;
         System.out.println("Parametro de entrada: ");
@@ -119,15 +117,9 @@ public class Server extends UnicastRemoteObject implements Hello {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
             System.out.println("Número a sumar a Y:"+tmpIdVuelo);
             System.out.println("Fin de desencripcion");
-            
-            inst = new ClaseInstrucciones(this.identificador,  this.reloj,  1,  tmpIdVuelo);
-            LOG.agregaInstruccion(inst);
-            this.reloj ++;
-            this.manejadorServidores.mandaInstrucciones(inst);
-            
-            
+            LOG.agregaInstruccion(new ClaseInstrucciones(this.identificador,  this.reloj,  2,  tmpIdVuelo));
             this.y+= tmpIdVuelo;
-            
+            this.reloj ++;
         } catch (Exception ex) {
             System.out.println(ex.toString());
         }
@@ -159,7 +151,6 @@ public class Server extends UnicastRemoteObject implements Hello {
 
     @Override
     public void multiplicaX(byte[] idVuelo, int idLlave, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) {
-        ClaseInstrucciones inst;
         System.out.println("Operacion de suma recibida en el servidor");
         int tmpIdVuelo = 0;
         System.out.println("Parametro de entrada: ");
@@ -168,14 +159,9 @@ public class Server extends UnicastRemoteObject implements Hello {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
             System.out.println("Número a sumar a Y:"+tmpIdVuelo);
             System.out.println("Fin de desencripcion");
-            
-            inst = new ClaseInstrucciones(this.identificador,  this.reloj,  3,  tmpIdVuelo);
-            LOG.agregaInstruccion(inst);
-            this.reloj ++;
-            this.manejadorServidores.mandaInstrucciones(inst);
-            
+            LOG.agregaInstruccion(new ClaseInstrucciones(this.identificador,  this.reloj,  3,  tmpIdVuelo));
             this.y *= tmpIdVuelo;
-            
+            this.reloj ++;
         } catch (Exception ex) {
             System.out.println(ex.toString());
         }
@@ -183,7 +169,6 @@ public class Server extends UnicastRemoteObject implements Hello {
 
     @Override
     public void multiplicaY(byte[] idVuelo, int idLlave, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) {
-        ClaseInstrucciones inst;
         System.out.println("Operacion de suma recibida en el servidor");
         int tmpIdVuelo = 0;
         System.out.println("Parametro de entrada: ");
@@ -192,11 +177,9 @@ public class Server extends UnicastRemoteObject implements Hello {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
             System.out.println("Número a sumar a Y:"+tmpIdVuelo);
             System.out.println("Fin de desencripcion");
-            inst = new ClaseInstrucciones(this.identificador,  this.reloj,  4,  tmpIdVuelo);
-            LOG.agregaInstruccion(inst);
+            LOG.agregaInstruccion(new ClaseInstrucciones(this.identificador,  this.reloj,  4,  tmpIdVuelo));
+            this.y *= tmpIdVuelo;
             this.reloj ++;
-            this.manejadorServidores.mandaInstrucciones(inst);this.y *= tmpIdVuelo;
-            
         } catch (Exception ex) {
             System.out.println(ex.toString());
         }
@@ -215,9 +198,9 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     
     
-    public static void main(String args[]) throws SQLException, IOException {
+    public static void main(String args[]) throws SQLException {
         try {
-            Server obj = new Server(206);
+            Server obj = new Server(1);
             Registry registry = LocateRegistry.createRegistry(1010);
             registry.bind("Hello", obj);
             System.out.println("Server RMI ready");
@@ -312,7 +295,6 @@ static class ClientHandler extends Thread
         String received;
         JSONObject jsonObject;
         ClaseInstrucciones ci;
-        int time = 0;
         while (true)  
         {   
             
@@ -344,14 +326,8 @@ static class ClientHandler extends Thread
                         System.out.println("Solicitud de reply realizada");
                     }else{
                         jsonObject = new JSONObject(received);
-                        time = Integer.parseInt(jsonObject.get("time").toString());
-                        if(reloj > time){
-                            time = reloj;
-                        }else{
-                            reloj = time + 1;
-                        }
                         ci = new ClaseInstrucciones(Integer.parseInt(jsonObject.get("sender").toString()), 
-                                           time,
+                                           Integer.parseInt(jsonObject.get("time").toString()),
                                            jsonObject.get("action").toString()+jsonObject.get("target").toString(),
                                            Integer.parseInt(jsonObject.get("value").toString()));
                         LOG.agregaInstruccion(ci);
