@@ -10,11 +10,13 @@ import java.util.*;
 import java.net.*; 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
   
 // Server class 
 public class ArribaConRMI{
     
-    static int numero = 1;
+    static ColaDePrioridad log = new ColaDePrioridad();
     
     public static void main(String[] args) {
 
@@ -94,53 +96,58 @@ static class ClientHandler extends Thread
     public void run()  
     { 
         String received;
+        JSONObject jsonObject;
+        ClaseInstrucciones ci;
         while (true)  
-        { 
+        {   
+            
             try { 
   
                 // Ask user what he wants 
-                dos.writeUTF("What do you want?[Sumar | Multiplicar]..\n"+ 
-                            "Type Exit to terminate connection."); 
+                /*dos.writeUTF("What do you want?[Sumar | Multiplicar]..\n"+ 
+                            "Type Exit to terminate connection.");
+*/
                   
                 // receive the answer from client 
                 received = dis.readUTF(); 
-                System.out.println("Lo que quiere el cliente"+s.toString()+" es: "+received);
-                System.out.println("Valor actual de la variable: "+ArribaConRMI.numero);
+                //System.out.println("Lo que quiere el cliente"+s.toString()+" es: "+received);
+                //System.out.println("Valor actual de la variable: "+ArribaConRMI.numero);
                 
                 if(received.equals("Exit")) 
                 {  
                     System.out.println("Client " + this.s + " sends exit..."); 
-                    System.out.println("Closing this connection."); 
+                    //System.out.println("Closing this connection."); 
                     this.s.close(); 
-                    System.out.println("Connection closed"); 
+                    //System.out.println("Connection closed"); 
                     break; 
                 } 
-                  
-                // write on output stream based on the 
-                // answer from the client 
-                switch (received) { 
-                  
-                    case "Sumar" : 
-                        ArribaConRMI.numero++;
-                        System.out.println("quiere sumar"); 
-                        dos.writeUTF(""+ArribaConRMI.numero); 
-                        break; 
-                          
-                    case "Multiplicar" : 
-                         ArribaConRMI.numero*=2;
-                        System.out.println("quiere multiplicar"); 
-                        dos.writeUTF(""+ArribaConRMI.numero); 
-                        break; 
-                          
-                    default: 
-                        dos.writeUTF("Invalid input"); 
-                        break; 
-                } 
-            } catch (IOException e) { 
-                e.printStackTrace(); 
+                
+                if(received.contains("release")){
+                    System.out.println("Solicitud de release");
+                }else{
+                    if(received.contains("reply")){
+                        System.out.println("Solicitud de reply realizada");
+                    }else{
+                        jsonObject = new JSONObject(received);
+                        ci = new ClaseInstrucciones(Integer.parseInt(jsonObject.get("sender").toString()), 
+                                           Integer.parseInt(jsonObject.get("time").toString()),
+                                           jsonObject.get("action").toString()+jsonObject.get("target").toString(),
+                                           Integer.parseInt(jsonObject.get("value").toString()));
+                        log.agregaInstruccion(ci);
+                        
+                        System.out.println("Estatus actual de la cola de prioridad");
+                        System.out.println(log.toString());
+                    }
+                }
+                 
+            } catch (IOException  e) { 
+                //System.out.println(e.toString());
+                
+            } catch (JSONException ex) {
+                //Logger.getLogger(ArribaConRMI.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            System.out.println("Valor de variable después de operación: "+ArribaConRMI.numero);
+            
         } 
           
         try

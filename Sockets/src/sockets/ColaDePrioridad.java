@@ -21,7 +21,9 @@ public class ColaDePrioridad {
     }
     
     public boolean agregaInstruccion(ClaseInstrucciones inst){
-        return pq.add(inst);
+        boolean res = pq.add(inst);
+        System.out.println(pq.toString());
+        return res;
     }
     
     public ClaseInstrucciones sacaInstruccion(){
