@@ -12,11 +12,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
   
 // Server class 
-public class SocketGeekForSeek extends Thread
-{ 
+public class ArribaConRMI{
     
+    static int numero = 1;
     
-    
+    public static void main(String[] args) {
+
+
+        SocketGeekForSeek manejador = new SocketGeekForSeek();
+        manejador.start();
+    }
+
+public static class SocketGeekForSeek extends Thread
+{     
     @Override
     public void run()  
     { 
@@ -61,25 +69,21 @@ public class SocketGeekForSeek extends Thread
         }
     }
     
-    public static void main(String[] args) {
-        SocketGeekForSeek manejador = new SocketGeekForSeek();
-        manejador.start();
-    }
+    
     
 } 
-  
+
 // ClientHandler class 
-class ClientHandler extends Thread  
+static class ClientHandler extends Thread  
 { 
-    DateFormat fordate = new SimpleDateFormat("yyyy/MM/dd"); 
-    DateFormat fortime = new SimpleDateFormat("hh:mm:ss"); 
+    
     final DataInputStream dis; 
     final DataOutputStream dos; 
     final Socket s; 
       
   
     // Constructor 
-    public ClientHandler(Socket s, DataInputStream dis, DataOutputStream dos)  
+    public ClientHandler(Socket s, DataInputStream dis, DataOutputStream dos)
     { 
         this.s = s; 
         this.dis = dis; 
@@ -89,20 +93,20 @@ class ClientHandler extends Thread
     @Override
     public void run()  
     { 
-        String received; 
-        String toreturn; 
+        String received;
         while (true)  
         { 
             try { 
   
                 // Ask user what he wants 
-                dos.writeUTF("What do you want?[Date | Time]..\n"+ 
+                dos.writeUTF("What do you want?[Sumar | Multiplicar]..\n"+ 
                             "Type Exit to terminate connection."); 
                   
                 // receive the answer from client 
                 received = dis.readUTF(); 
                 System.out.println("Lo que quiere el cliente"+s.toString()+" es: "+received);
-                  
+                System.out.println("Valor actual de la variable: "+ArribaConRMI.numero);
+                
                 if(received.equals("Exit")) 
                 {  
                     System.out.println("Client " + this.s + " sends exit..."); 
@@ -112,21 +116,20 @@ class ClientHandler extends Thread
                     break; 
                 } 
                   
-                // creating Date object 
-                Date date = new Date(); 
-                  
                 // write on output stream based on the 
                 // answer from the client 
                 switch (received) { 
                   
-                    case "Date" : 
-                        toreturn = fordate.format(date); 
-                        dos.writeUTF(toreturn); 
+                    case "Sumar" : 
+                        ArribaConRMI.numero++;
+                        System.out.println("quiere sumar"); 
+                        dos.writeUTF(""+ArribaConRMI.numero); 
                         break; 
                           
-                    case "Time" : 
-                        toreturn = fortime.format(date); 
-                        dos.writeUTF(toreturn); 
+                    case "Multiplicar" : 
+                         ArribaConRMI.numero*=2;
+                        System.out.println("quiere multiplicar"); 
+                        dos.writeUTF(""+ArribaConRMI.numero); 
                         break; 
                           
                     default: 
@@ -135,7 +138,9 @@ class ClientHandler extends Thread
                 } 
             } catch (IOException e) { 
                 e.printStackTrace(); 
-            } 
+            }
+            
+            System.out.println("Valor de variable después de operación: "+ArribaConRMI.numero);
         } 
           
         try
@@ -149,3 +154,4 @@ class ClientHandler extends Thread
         } 
     } 
 } 
+}
