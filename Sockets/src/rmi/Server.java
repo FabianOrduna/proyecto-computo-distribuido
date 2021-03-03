@@ -95,10 +95,10 @@ public class Server extends UnicastRemoteObject implements Hello {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
             System.out.println("Número a sumar a X:"+tmpIdVuelo);
             System.out.println("Fin de desencripcion");
-            
+            this.reloj ++;
             inst = new ClaseInstrucciones(this.identificador,  this.reloj,  1,  tmpIdVuelo);
             LOG.agregaInstruccion(inst);
-            this.reloj ++;
+            
             this.manejadorServidores.mandaInstrucciones(inst);
             
             this.x+=tmpIdVuelo;
@@ -119,10 +119,9 @@ public class Server extends UnicastRemoteObject implements Hello {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
             System.out.println("Número a sumar a Y:"+tmpIdVuelo);
             System.out.println("Fin de desencripcion");
-            
+            this.reloj ++;
             inst = new ClaseInstrucciones(this.identificador,  this.reloj,  1,  tmpIdVuelo);
             LOG.agregaInstruccion(inst);
-            this.reloj ++;
             this.manejadorServidores.mandaInstrucciones(inst);
             
             
@@ -168,10 +167,10 @@ public class Server extends UnicastRemoteObject implements Hello {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
             System.out.println("Número a sumar a Y:"+tmpIdVuelo);
             System.out.println("Fin de desencripcion");
-            
+            this.reloj ++;
             inst = new ClaseInstrucciones(this.identificador,  this.reloj,  3,  tmpIdVuelo);
             LOG.agregaInstruccion(inst);
-            this.reloj ++;
+            
             this.manejadorServidores.mandaInstrucciones(inst);
             
             this.y *= tmpIdVuelo;
@@ -192,9 +191,10 @@ public class Server extends UnicastRemoteObject implements Hello {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
             System.out.println("Número a sumar a Y:"+tmpIdVuelo);
             System.out.println("Fin de desencripcion");
+            this.reloj ++;
             inst = new ClaseInstrucciones(this.identificador,  this.reloj,  4,  tmpIdVuelo);
             LOG.agregaInstruccion(inst);
-            this.reloj ++;
+            
             this.manejadorServidores.mandaInstrucciones(inst);this.y *= tmpIdVuelo;
             
         } catch (Exception ex) {
@@ -348,7 +348,7 @@ static class ClientHandler extends Thread
                         if(reloj > time){
                             time = reloj;
                         }else{
-                            reloj = time + 1;
+                            reloj = time;
                         }
                         ci = new ClaseInstrucciones(Integer.parseInt(jsonObject.get("sender").toString()), 
                                            time,
