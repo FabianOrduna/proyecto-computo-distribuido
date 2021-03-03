@@ -86,6 +86,7 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     @Override
     public void sumaX(byte[] idVuelo, int llaveId, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) throws RemoteException, SQLException, IOException {
+        ClaseInstrucciones inst;
         System.out.println("Operacion de suma recibida en el servidor");
         int tmpIdVuelo = 0;
         System.out.println("Parametro de entrada: ");
@@ -95,7 +96,9 @@ public class Server extends UnicastRemoteObject implements Hello {
             System.out.println("Número a sumar a X:"+tmpIdVuelo);
             System.out.println("Fin de desencripcion");
             
-            LOG.agregaInstruccion(new ClaseInstrucciones(this.identificador,  this.reloj,  1,  tmpIdVuelo));
+            inst = new ClaseInstrucciones(this.identificador,  this.reloj,  1,  tmpIdVuelo);
+            LOG.agregaInstruccion(inst);
+            this.manejadorServidores.mandaInstrucciones(inst);
             
             this.x+=tmpIdVuelo;
             this.reloj ++;
