@@ -30,15 +30,20 @@ public class ManejadorSockets extends Thread {
         this.nodos.add(new Nodo("148.205.36.218",5056, 218));
         this.nodos.add(new Nodo("148.205.36.214",5056, 214));
         
-        Socket s;
-        for (int i = 0; i < nodos.size(); i++) {
-            s= new Socket(this.nodos.get(i).getHost(), this.nodos.get(i).getPort());
-            this.connSockets.add(s);
-            this.outputs.add(new DataOutputStream(s.getOutputStream()));
-        }
+        
     }
     
-    public void mandaInstrucciones(ClaseInstrucciones inst){
+    public void mandaInstrucciones(ClaseInstrucciones inst) throws IOException{
+        
+        if(this.connSockets.size()==0){
+            Socket s;
+            for (int i = 0; i < nodos.size(); i++) {
+                s= new Socket(this.nodos.get(i).getHost(), this.nodos.get(i).getPort());
+                this.connSockets.add(s);
+                this.outputs.add(new DataOutputStream(s.getOutputStream()));
+            }
+        }
+        
         Nodo n;
         for (int i = 0; i < nodos.size(); i++) {
             n = nodos.get(i);
