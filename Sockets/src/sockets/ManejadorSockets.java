@@ -18,13 +18,24 @@ import java.util.logging.Logger;
  */
 public class ManejadorSockets extends Thread {
     private ArrayList<Nodo> nodos;
+    private ArrayList<Socket> connSockets;
+    private ArrayList<DataOutputStream> outputs;
     
-    public ManejadorSockets(){
+    public ManejadorSockets() throws IOException{
         this.nodos = new ArrayList();
+        this.connSockets = new ArrayList();
+        this.outputs = new ArrayList();
         //this.nodos.add(new Nodo("148.205.36.206",5000, 214));
         
         this.nodos.add(new Nodo("148.205.36.218",5056, 218));
         this.nodos.add(new Nodo("148.205.36.214",5056, 214));
+        
+        Socket s;
+        for (int i = 0; i < nodos.size(); i++) {
+            s= new Socket(this.nodos.get(i).getHost(), this.nodos.get(i).getPort());
+            this.connSockets.add(s);
+            this.outputs.add(new DataOutputStream(s.getOutputStream()));
+        }
     }
     
     public void mandaInstrucciones(ClaseInstrucciones inst){
@@ -41,6 +52,22 @@ public class ManejadorSockets extends Thread {
         }
     }
     
+    public Socket recuperaSocketPorHost(String host){
+        int i  = 0;
+        while(!this.nodos.get(i).getHost().equals(host)){
+            i++;
+        }
+        return this.connSockets.get(i);
+    }
+    
+    public DataOutputStream recuperaOutputPorHost(String host){
+        int i  = 0;
+        while(!this.nodos.get(i).getHost().equals(host)){
+            i++;
+        }
+        return this.outputs.get(i);
+    }
+    
     public void mandaInstruccionANodo(ClaseInstrucciones inst, Nodo nod){
         Socket socket;
         DataOutputStream out;
@@ -48,9 +75,9 @@ public class ManejadorSockets extends Thread {
         String target;
         String action;
         try {
-            System.out.println("Tratando de conectar con el "+nod.getHost());
-            socket = new Socket(nod.getHost(), nod.getPort());
-            out = new DataOutputStream(socket.getOutputStream());
+            System.out.println("Recuperando socket "+nod.getHost());
+            socket = recuperaSocketPorHost(nod.getHost());
+            out = recuperaOutputPorHost(nod.getHost());
             //in = new DataInputStream(System.in);
             
             if(inst.getInstruccion() == inst.ADD_X || inst.getInstruccion() == inst.MULTIPLY_X){
@@ -72,8 +99,10 @@ public class ManejadorSockets extends Thread {
             out.writeUTF(mensaje);
             System.out.println("Después de enviar");
             //in.close();
-            out.close();
-            socket.close();
+            
+            //out.close();
+            //socket.close();
+            
         } catch (Exception ex) {
             Logger.getLogger(ManejadorSockets.class.getName()).log(Level.SEVERE, null, ex);
             //System.out.println(ex.toString());
