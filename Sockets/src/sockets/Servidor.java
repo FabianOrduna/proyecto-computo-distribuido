@@ -19,7 +19,7 @@ import org.json.JSONObject;
 public class Servidor {
     
     // inicialiar sockt y entrada
-    private Nodo socket = null;
+    private Socket socket = null;
     private ServerSocket servidor = null;
     private DataInputStream in = null;
     
@@ -44,38 +44,51 @@ public class Servidor {
             ClaseInstrucciones ci;
             
             // leer mensaje hasta recibir Fin
-            while(!mensaje.equals("Fin")){
+            //int num = 0;
+            while(true){
                 try{
-                    mensaje = in.readUTF();
+                    //
+                    if(in.available() >0){
+                        mensaje = in.readUTF();
                     
-                    // convert JSON message
-                    try {
-                    jsonObject = new JSONObject(mensaje);
-                    System.out.println(jsonObject.get("action"));
-                    System.out.println(jsonObject.get("value"));
-                    System.out.println(jsonObject.get("target"));
-                    System.out.println(jsonObject.get("sender"));
-                    System.out.println(jsonObject.get("time"));
-                    ci = new ClaseInstrucciones(Integer.parseInt(jsonObject.get("sender").toString()), 
-                                       Integer.parseInt(jsonObject.get("time").toString()),
-                                       jsonObject.get("action").toString()+jsonObject.get("target").toString(),
-                                       Integer.parseInt(jsonObject.get("value").toString()));
-                    log.agregaInstruccion(ci);
-                    System.out.println(log.toString());
-                    }catch (JSONException err){
-                     //Log.BRIEF;
+                    
+                        // convert JSON message - { "action": "ADD", "value": 1, "target": "x", "sender":"14", "time":"5"}
+
+                        if(mensaje!=null){
+
+
+                        jsonObject = new JSONObject(mensaje);
+                        System.out.println(jsonObject.get("action"));
+                        System.out.println(jsonObject.get("value"));
+                        System.out.println(jsonObject.get("target"));
+                        System.out.println(jsonObject.get("sender"));
+                        System.out.println(jsonObject.get("time"));
+                        ci = new ClaseInstrucciones(Integer.parseInt(jsonObject.get("sender").toString()), 
+                                           Integer.parseInt(jsonObject.get("time").toString()),
+                                           jsonObject.get("action").toString()+jsonObject.get("target").toString(),
+                                           Integer.parseInt(jsonObject.get("value").toString()));
+                        log.agregaInstruccion(ci);
+                        System.out.println(log.toString());
+
+                        mensaje = null;
+                        }
                     }
-                } catch (IOException ex) {
+                } catch (Exception ex) {
                     Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
+                    socket.close();
+                    in.close();
                 }
+                //num++;
             }
-            System.out.println("Cerrando conexión");
             
-            socket.close();
-            in.close();
+            //System.out.println("Cerrando conexión");
+            //socket.close();
+            //in.close();
+            
         }
-        catch(IOException e){ 
+        catch(Exception e){ 
             System.out.println(e); 
+            
         } 
     }
     

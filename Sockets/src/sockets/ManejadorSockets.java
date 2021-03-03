@@ -21,7 +21,8 @@ public class ManejadorSockets {
     
     public ManejadorSockets(){
         this.nodos = new ArrayList();
-        this.nodos.add(new Nodo("148.205.36.214",5000, 214));
+        this.nodos.add(new Nodo("148.205.36.206",5000, 214));
+        //this.nodos.add(new Nodo("148.205.36.214",5000, 214));
         //this.nodos.add(new Nodo("148.205.36.218",5000, 218));
     }
     
@@ -43,7 +44,7 @@ public class ManejadorSockets {
         try {
             socket = new Socket(nod.getHost(), nod.getPort());
             out = new DataOutputStream(socket.getOutputStream());
-            in = new DataInputStream(System.in);
+            //in = new DataInputStream(System.in);
             
             if(inst.getInstruccion() == inst.ADD_X || inst.getInstruccion() == inst.MULTIPLY_X){
                 target = "x";
@@ -59,9 +60,10 @@ public class ManejadorSockets {
             
             mensaje = "{\"action\":\""+action+"\", \"value\":"+inst.getValor()+", \"target\":\""+target+"\", \"sender\":\""+inst.getIdentificador()+"\", \"time\":\""+inst.getTiempo()+"\"}";
             //mensaje = "Hola";
+            System.out.println("Mensaje a enviar: "+mensaje);
             out.writeUTF(mensaje);
-            
-            in.close();
+            System.out.println("Después de enviar");
+            //in.close();
             out.close();
             socket.close();
         } catch (Exception ex) {

@@ -16,17 +16,17 @@ import java.util.logging.Logger;
  */
 public class Cliente {
     // inicializar las entradas y salidas
-    private Nodo socket = null;
+    private Socket socket = null;
     private DataInputStream in = null;
     private DataOutputStream out = null;
 
     public Cliente(String ip, int puerto) {
         try{
-            socket = new Nodo(ip, puerto);
+            socket = new Socket(ip, puerto);
             System.out.println("Ya me conecté");
             
             // recibe entrada de la terminal
-            in = new DataInputStream(System.in);
+            //in = new DataInputStream(System.in);
             
             // manda la salida al socket
             out = new DataOutputStream(socket.getOutputStream());
@@ -35,17 +35,19 @@ public class Cliente {
         }
         
         String mensaje = "";
-        while(!mensaje.equals("Fin")){
+        int num = 0;
+        while(num<5){
             try{
-                mensaje = in.readLine();
-                out.writeUTF(mensaje);
+                //mensaje = in.readLine();
+                out.writeUTF("{ \"action\": \"ADD\", \"value\": 1, \"target\": \"x\", \"sender\":\""+num*1000+"\", \"time\":\"5\"}");
             } catch (IOException ex) {
                 Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
-            }            
+            }
+            num ++;
         }
         // cerrar conexion
         try{
-            in.close();
+            //in.close();
             out.close();
             socket.close();
         }
@@ -55,7 +57,7 @@ public class Cliente {
     }
     
     public static void main(String args[]){
-        Cliente cliente = new Cliente("148.205.36.214", 5000);
+        Cliente cliente = new Cliente("148.205.36.206", 5000);
     }
     
     
