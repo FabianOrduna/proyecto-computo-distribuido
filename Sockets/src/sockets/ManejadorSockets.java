@@ -9,6 +9,8 @@ import java.net.*;
 import java.io.*;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -21,15 +23,21 @@ public class ManejadorSockets extends Thread {
         this.nodos = new ArrayList();
         //this.nodos.add(new Nodo("148.205.36.206",5000, 214));
         
-        this.nodos.add(new Nodo("148.205.36.218",5000, 218));
-        this.nodos.add(new Nodo("148.205.36.214",5000, 214));
+        this.nodos.add(new Nodo("148.205.36.218",5056, 218));
+        this.nodos.add(new Nodo("148.205.36.214",5056, 214));
     }
     
-    public void mandaInstrucciones(ClaseInstrucciones inst) throws IOException{
+    public void mandaInstrucciones(ClaseInstrucciones inst){
         Nodo n;
         for (int i = 0; i < nodos.size(); i++) {
             n = nodos.get(i);
-            mandaInstruccionANodo(inst, n);
+            try{
+                
+                mandaInstruccionANodo(inst, n);
+            }catch(Exception e){
+                System.out.println(e.toString());
+            }
+            
         }
     }
     
@@ -40,6 +48,7 @@ public class ManejadorSockets extends Thread {
         String target;
         String action;
         try {
+            System.out.println("Tratando de conectar con el "+nod.getHost());
             socket = new Socket(nod.getHost(), nod.getPort());
             out = new DataOutputStream(socket.getOutputStream());
             //in = new DataInputStream(System.in);
@@ -66,8 +75,8 @@ public class ManejadorSockets extends Thread {
             out.close();
             socket.close();
         } catch (Exception ex) {
-            //Logger.getLogger(ManejadorSockets.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println(ex.toString());
+            Logger.getLogger(ManejadorSockets.class.getName()).log(Level.SEVERE, null, ex);
+            //System.out.println(ex.toString());
         }
         
     }

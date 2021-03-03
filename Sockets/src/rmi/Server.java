@@ -200,7 +200,7 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     public static void main(String args[]) throws SQLException {
         try {
-            Server obj = new Server(1);
+            Server obj = new Server(206);
             Registry registry = LocateRegistry.createRegistry(1010);
             registry.bind("Hello", obj);
             System.out.println("Server RMI ready");
