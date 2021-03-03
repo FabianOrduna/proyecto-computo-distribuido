@@ -21,9 +21,10 @@ public class ManejadorSockets {
     
     public ManejadorSockets(){
         this.nodos = new ArrayList();
-        this.nodos.add(new Nodo("148.205.36.206",5000, 214));
-        //this.nodos.add(new Nodo("148.205.36.214",5000, 214));
-        //this.nodos.add(new Nodo("148.205.36.218",5000, 218));
+        //this.nodos.add(new Nodo("148.205.36.206",5000, 214));
+        
+        this.nodos.add(new Nodo("148.205.36.218",5000, 218));
+        this.nodos.add(new Nodo("148.205.36.214",5000, 214));
     }
     
     public void mandaInstrucciones(ClaseInstrucciones inst) throws IOException{
@@ -60,6 +61,7 @@ public class ManejadorSockets {
             
             mensaje = "{\"action\":\""+action+"\", \"value\":"+inst.getValor()+", \"target\":\""+target+"\", \"sender\":\""+inst.getIdentificador()+"\", \"time\":\""+inst.getTiempo()+"\"}";
             //mensaje = "Hola";
+            System.out.println("Enviando mensaje a :"+nod.getHost());
             System.out.println("Mensaje a enviar: "+mensaje);
             out.writeUTF(mensaje);
             System.out.println("Después de enviar");
@@ -75,7 +77,7 @@ public class ManejadorSockets {
     
     public static void main(String[] args) throws IOException {
         ManejadorSockets ms = new ManejadorSockets();
-        ClaseInstrucciones ci = new ClaseInstrucciones(306, 2, "ADDX", 3);
+        ClaseInstrucciones ci = new ClaseInstrucciones(876543210, 2, "ADDX", 3);
         ms.mandaInstrucciones(ci);
     }
     
