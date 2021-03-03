@@ -16,14 +16,14 @@ import org.json.JSONObject;
  *
  * @author mcc14
  */
-public class Servidor {
+public class Escuchador {
     
     // inicialiar sockt y entrada
     private Socket socket = null;
     private ServerSocket servidor = null;
     private DataInputStream in = null;
     
-    public Servidor(int puerto){
+    public Escuchador(int puerto){
         
         // el servidor espera a que llegue una conexion
         try{
@@ -74,10 +74,11 @@ public class Servidor {
                         }
                     }
                 } catch (Exception ex) {
-                    Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Escuchador.class.getName()).log(Level.SEVERE, null, ex);
                     socket.close();
                     in.close();
                 }
+                //num++;
                 //num++;
             }
             
@@ -93,7 +94,7 @@ public class Servidor {
     }
     
     public static void main(String args[]){
-        Servidor s = new Servidor(5000);
+        Escuchador s = new Escuchador(5000);
     }
     
 }
