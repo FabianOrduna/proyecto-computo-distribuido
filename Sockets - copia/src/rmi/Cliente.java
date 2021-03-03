@@ -26,7 +26,7 @@ public class Cliente {
 
     public static void main(String[] args) throws RemoteException, NotBoundException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException, NoSuchPaddingException, IOException {
 
-        String host = (args.length < 1) ? "148.205.36.214" : args[0];
+        String host = (args.length < 1) ? "localhost" : args[0];
         System.setProperty("java.rmi.server.hostname", host);
         Registry registry = LocateRegistry.getRegistry(host, 1010);
         Hello stub = (Hello) registry.lookup("Hello");
