@@ -36,6 +36,6 @@ public interface Hello extends Remote{
     public byte[] getX(byte[] clientPubKeyEnc) throws RemoteException, NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException;
     public byte[] getY(byte[] clientPubKeyEnc) throws RemoteException, NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException;
     
-    public void multiplicaX(byte[] parametroAMandar, int idLlave, byte[] clientPubKeyEnc, byte[] obtenParametrosDeCifrado);
-    public void multiplicaY(byte[] parametroAMandar, int idLlave, byte[] clientPubKeyEnc, byte[] obtenParametrosDeCifrado);   
+    public void multiplicaX(byte[] parametroAMandar, int idLlave, byte[] clientPubKeyEnc, byte[] obtenParametrosDeCifrado) throws RemoteException, NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException;
+    public void multiplicaY(byte[] parametroAMandar, int idLlave, byte[] clientPubKeyEnc, byte[] obtenParametrosDeCifrado) throws RemoteException, NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException;   
 }

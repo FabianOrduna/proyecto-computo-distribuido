@@ -9,14 +9,12 @@ import java.net.*;
 import java.io.*;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author mcc06
  */
-public class ManejadorSockets {
+public class ManejadorSockets extends Thread {
     private ArrayList<Nodo> nodos;
     
     public ManejadorSockets(){
@@ -36,9 +34,8 @@ public class ManejadorSockets {
     }
     
     public void mandaInstruccionANodo(ClaseInstrucciones inst, Nodo nod){
-        Socket socket = null;
-        DataOutputStream out = null;
-        DataInputStream in = null;
+        Socket socket;
+        DataOutputStream out;
         String mensaje;
         String target;
         String action;
@@ -69,16 +66,10 @@ public class ManejadorSockets {
             out.close();
             socket.close();
         } catch (Exception ex) {
-            Logger.getLogger(ManejadorSockets.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(ManejadorSockets.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println(ex.toString());
         }
         
-    }
-    
-    public static void main(String[] args) throws IOException {
-        ManejadorSockets ms = new ManejadorSockets();
-        ClaseInstrucciones ci = new ClaseInstrucciones(876543210, 2, "ADDX", 3);
-        ms.mandaInstrucciones(ci);
     }
     
 }
