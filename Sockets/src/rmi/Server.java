@@ -35,7 +35,7 @@ public class Server extends UnicastRemoteObject implements Hello {
     private ManejadorSockets manejadorServidores;
     
     
-    public Server(int identificador) throws RemoteException, SQLException, AlreadyBoundException{
+    public Server(int identificador) throws RemoteException, SQLException, AlreadyBoundException, IOException{
 
         this.manejadorLlaves = new ManejadorLlaves();
         this.reloj = 1;
@@ -198,7 +198,7 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     
     
-    public static void main(String args[]) throws SQLException {
+    public static void main(String args[]) throws SQLException, IOException {
         try {
             Server obj = new Server(206);
             Registry registry = LocateRegistry.createRegistry(1010);
