@@ -35,12 +35,15 @@ public class ManejadorSockets extends Thread {
     
     public void mandaInstrucciones(ClaseInstrucciones inst) throws IOException{
         
-        if(this.connSockets.size()==0){
+        if(this.connSockets.isEmpty()){
             Socket s;
+            
             for (int i = 0; i < nodos.size(); i++) {
                 s= new Socket(this.nodos.get(i).getHost(), this.nodos.get(i).getPort());
                 this.connSockets.add(s);
+                System.out.println("Añadiendo el output"+this.nodos.get(i).getHost());
                 this.outputs.add(new DataOutputStream(s.getOutputStream()));
+                System.out.println("Después de añadir el output");
             }
         }
         
@@ -74,10 +77,26 @@ public class ManejadorSockets extends Thread {
     }
     
     public void mandaJSONANodoPorIdentificador(int identificador, String json) throws IOException{
+        
+        if(this.connSockets.isEmpty()){
+            Socket s;
+            
+            for (int i = 0; i < nodos.size(); i++) {
+                s= new Socket(this.nodos.get(i).getHost(), this.nodos.get(i).getPort());
+                this.connSockets.add(s);
+                System.out.println("Añadiendo el output"+this.nodos.get(i).getHost());
+                this.outputs.add(new DataOutputStream(s.getOutputStream()));
+                System.out.println("Después de añadir el output");
+            }
+        }
+        
         Socket s;
         DataOutputStream out;
         int i  = 0;
-        while(!(this.nodos.get(i).getId() == identificador)){
+        System.out.println("El total de nodos son "+this.nodos.size());
+        System.out.println("El total de sockets son "+this.connSockets.size());
+        System.out.println("El total de outputs son "+this.outputs.size());
+        while(this.nodos.get(i).getId() != identificador){
             i++;
         }
         out = this.outputs.get(i);
