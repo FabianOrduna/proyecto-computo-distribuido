@@ -30,7 +30,17 @@ public class ManejadorSockets extends Thread {
         this.nodos.add(new Nodo("148.205.36.218",5056, 218));
         this.nodos.add(new Nodo("148.205.36.214",5056, 214));
         
+    }
+    
+    public ManejadorSockets(Nodo [] n) throws IOException{
+        this.nodos = new ArrayList();
+        this.connSockets = new ArrayList();
+        this.outputs = new ArrayList();
+        //this.nodos.add(new Nodo("148.205.36.206",5000, 214));
         
+        for (int i = 0; i < n.length; i++) {
+            this.nodos.add(n[i]);
+        }        
     }
     
     public void mandaInstrucciones(ClaseInstrucciones inst) throws IOException{
