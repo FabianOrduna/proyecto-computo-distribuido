@@ -98,11 +98,11 @@ public class ManejadorLlaves {
 
             if(Arrays.equals(temp.getLlavePublicaCliente(), llavePublica)){
                 encontrado=true;
-                System.out.println("Llave encontrada es la: "+indice);
+                //System.out.println("Llave encontrada es la: "+indice);
             }
             indice++;
         }
-        System.out.println(temp.toString());
+        //System.out.println(temp.toString());
         return temp;
     }
     
