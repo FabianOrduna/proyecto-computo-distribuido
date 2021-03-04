@@ -99,14 +99,14 @@ public class Server extends UnicastRemoteObject implements Hello {
     @Override
     public void sumaX(byte[] idVuelo, int llaveId, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) throws RemoteException, SQLException, IOException {
         ClaseInstrucciones inst;
-        System.out.println("Operacion de suma recibida en el servidor");
+        //System.out.println("Operacion de suma recibida en el servidor");
         int tmpIdVuelo = 0;
-        System.out.println("Parametro de entrada: ");
-        System.out.println(idVuelo);
+        //System.out.println("Parametro de entrada: ");
+        //System.out.println(idVuelo);
         try {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
-            System.out.println("Número a sumar a X:"+tmpIdVuelo);
-            System.out.println("Fin de desencripcion");
+           // System.out.println("Número a sumar a X:"+tmpIdVuelo);
+            //System.out.println("Fin de desencripcion");
             this.reloj ++;
             inst = new ClaseInstrucciones(this.identificador,  this.reloj,  1,  tmpIdVuelo);
             LOG.agregaInstruccion(inst);
@@ -123,14 +123,14 @@ public class Server extends UnicastRemoteObject implements Hello {
     @Override
     public void sumaY(byte[] idVuelo, int llaveId, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) throws RemoteException, SQLException, IOException {
         ClaseInstrucciones inst;
-        System.out.println("Operacion de suma recibida en el servidor");
+        //System.out.println("Operacion de suma recibida en el servidor");
         int tmpIdVuelo = 0;
-        System.out.println("Parametro de entrada: ");
-        System.out.println(idVuelo);
+        //System.out.println("Parametro de entrada: ");
+        //System.out.println(idVuelo);
         try {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
-            System.out.println("Número a sumar a Y:"+tmpIdVuelo);
-            System.out.println("Fin de desencripcion");
+            //System.out.println("Número a sumar a Y:"+tmpIdVuelo);
+            //System.out.println("Fin de desencripcion");
             this.reloj ++;
             inst = new ClaseInstrucciones(this.identificador,  this.reloj,  1,  tmpIdVuelo);
             LOG.agregaInstruccion(inst);
@@ -171,14 +171,14 @@ public class Server extends UnicastRemoteObject implements Hello {
     @Override
     public void multiplicaX(byte[] idVuelo, int idLlave, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) {
         ClaseInstrucciones inst;
-        System.out.println("Operacion de suma recibida en el servidor");
+        //System.out.println("Operacion de suma recibida en el servidor");
         int tmpIdVuelo = 0;
-        System.out.println("Parametro de entrada: ");
-        System.out.println(idVuelo);
+        //System.out.println("Parametro de entrada: ");
+        //System.out.println(idVuelo);
         try {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
-            System.out.println("Número a sumar a Y:"+tmpIdVuelo);
-            System.out.println("Fin de desencripcion");
+            //System.out.println("Número a sumar a Y:"+tmpIdVuelo);
+            //System.out.println("Fin de desencripcion");
             this.reloj ++;
             inst = new ClaseInstrucciones(this.identificador,  this.reloj,  3,  tmpIdVuelo);
             LOG.agregaInstruccion(inst);
@@ -195,14 +195,14 @@ public class Server extends UnicastRemoteObject implements Hello {
     @Override
     public void multiplicaY(byte[] idVuelo, int idLlave, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) {
         ClaseInstrucciones inst;
-        System.out.println("Operacion de suma recibida en el servidor");
+        //System.out.println("Operacion de suma recibida en el servidor");
         int tmpIdVuelo = 0;
-        System.out.println("Parametro de entrada: ");
-        System.out.println(idVuelo);
+        //System.out.println("Parametro de entrada: ");
+        //System.out.println(idVuelo);
         try {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
-            System.out.println("Número a sumar a Y:"+tmpIdVuelo);
-            System.out.println("Fin de desencripcion");
+            //System.out.println("Número a sumar a Y:"+tmpIdVuelo);
+            //System.out.println("Fin de desencripcion");
             this.reloj ++;
             inst = new ClaseInstrucciones(this.identificador,  this.reloj,  4,  tmpIdVuelo);
             LOG.agregaInstruccion(inst);
@@ -255,7 +255,7 @@ public class Server extends UnicastRemoteObject implements Hello {
     @Override
     public void run()  
     { 
-        System.out.println("Server sockets ready");
+        //System.out.println("Server sockets ready");
         try {
             // server is listening on port 5056
             ServerSocket ss = new ServerSocket(5056);
@@ -272,13 +272,13 @@ public class Server extends UnicastRemoteObject implements Hello {
                     //System.out.println("Esperando a cliente");
                     s = ss.accept();
                     
-                    System.out.println("A new client is connected : " + s);
+                    //System.out.println("A new client is connected : " + s);
                     
                     // obtaining input and out streams
                     DataInputStream dis = new DataInputStream(s.getInputStream());
                     DataOutputStream dos = new DataOutputStream(s.getOutputStream());
                     
-                    System.out.println("Assigning new thread for this client");
+                    //System.out.println("Assigning new thread for this client");
                     
                     // create a new thread object
                     Thread t = new ClientHandler(s, dis, dos);
@@ -327,10 +327,10 @@ static class ClientHandler extends Thread
         int time = 0;
         int entero = 0;
         Enumeration enumeracionReplyTable;
-        boolean unosReplyTable = false;
+        boolean unosReplyTable;
         while (true)  
         {   
-            unosReplyTable = false;
+            unosReplyTable = true;
             
             
             try { 
@@ -381,11 +381,15 @@ static class ClientHandler extends Thread
                         
                         
                         for(int indice : replyTable.keySet()){
+                            //System.out.println("Adento del foreach");
                             unosReplyTable = unosReplyTable && replyTable.get(indice) == 1;
                             if(unosReplyTable == false){
                                 break;
                             }
                         }
+                        
+                        System.out.println(replyTable.toString());
+                        System.out.println("Tiene todos los reply?" + unosReplyTable);
                         
                         if(unosReplyTable){
                             if(LOG.getCabeza().getIdentificador() == identificador){
@@ -396,7 +400,7 @@ static class ClientHandler extends Thread
                         }
                         
                         
-                        System.out.println(replyTable.toString());
+                        
                         
                         
                         /*replyTable.forEach((Integer k, Integer v) -> { 
