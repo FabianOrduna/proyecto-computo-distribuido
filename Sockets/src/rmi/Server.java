@@ -418,6 +418,9 @@ static class ClientHandler extends Thread
                     
                     if(LOG.getCabeza().getIdentificador() == entero){
                         ejecutaInstruccion(LOG.pollCabeza());
+                        for(int indice : replyTable.keySet()){                 
+                            replyTable.put(indice,0 );
+                        }
                     }
                     
                     
