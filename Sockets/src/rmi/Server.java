@@ -32,8 +32,8 @@ public class Server extends UnicastRemoteObject implements Hello {
     private int x;
     private int y;
     public static ColaDePrioridad LOG = new ColaDePrioridad();
-    private int identificador;
-    private ManejadorSockets manejadorServidores;
+    private static int identificador;
+    public static ManejadorSockets manejadorServidores;
     public static final int NUM_NODOS = 3; //esto incluye al nodo actual
     public static final int NUM_VECINOS = 2;
     public static Hashtable reply = new Hashtable();
@@ -364,6 +364,12 @@ static class ClientHandler extends Thread
                     if(received.contains("reply")){
                         System.out.println("Solicitud de reply realizada");
                         
+                        System.out.println("Reply entrante:");
+                        System.out.println(received);
+                        
+                        
+                        
+                        
                         /**
                          * 
                          * 1. METE A SU HASH EL REPLY RECIBIDO
@@ -410,6 +416,9 @@ static class ClientHandler extends Thread
                          * 
                          */
                         
+                        String mensajeReply = "{\"reply\":\"reply\", \"id\":\""+identificador+"\"}";
+                        
+                        manejadorServidores.mandaJSONANodoPorIdentificador(Integer.parseInt(jsonObject.get("sender").toString()), mensajeReply);
                         
                         //System.out.println("Estatus actual de la cola de prioridad");
                         //System.out.println(log.toString());

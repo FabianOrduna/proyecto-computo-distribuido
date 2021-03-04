@@ -73,6 +73,18 @@ public class ManejadorSockets extends Thread {
         return this.outputs.get(i);
     }
     
+    public void mandaJSONANodoPorIdentificador(int identificador, String json) throws IOException{
+        Socket s;
+        DataOutputStream out;
+        int i  = 0;
+        while(!(this.nodos.get(i).getId() == identificador)){
+            i++;
+        }
+        out = this.outputs.get(i);
+        out.writeUTF(json);
+        System.out.println("Reply enviado a "+identificador);
+    }
+    
     public void mandaInstruccionANodo(ClaseInstrucciones inst, Nodo nod){
         Socket socket;
         DataOutputStream out;
