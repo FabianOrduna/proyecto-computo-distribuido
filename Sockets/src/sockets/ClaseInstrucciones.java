@@ -8,11 +8,11 @@ public class ClaseInstrucciones implements Comparable{
     private int tiempo;
     private int instruccion;
     private int valor;
-    final int NONE = 0;
-    final int ADD_X = 1;
-    final int ADD_Y = 2;
-    final int MULTIPLY_X = 3;
-    final int MULTIPLY_Y = 4;
+    public final static int NONE = 0;
+    public final static int ADD_X = 1;
+    public final static int ADD_Y = 2;
+    public final static int MULTIPLY_X = 3;
+    public final static int MULTIPLY_Y = 4;
     
     public ClaseInstrucciones(int identificador, int tiempo, int instruccion, int value){
         this.identificador = identificador;
@@ -39,6 +39,9 @@ public class ClaseInstrucciones implements Comparable{
                 break;
             case "MULTIPLYY":
                 this.instruccion = MULTIPLY_Y;
+                break;
+            default:
+                this.instruccion = NONE;
                 break;
         }
     }

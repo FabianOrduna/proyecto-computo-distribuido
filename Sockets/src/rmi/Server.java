@@ -31,16 +31,14 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     private ManejadorLlaves manejadorLlaves;
     private static int reloj;
-    private int x;
-    private int y;
+    private static int x;
+    private static int y;
     public static ColaDePrioridad LOG = new ColaDePrioridad();
     private static int identificador;
     public static ManejadorSockets manejadorServidores;
     public static final int NUM_NODOS = 3; //esto incluye al nodo actual
     public static final int NUM_VECINOS = 2;
     public static Map <Integer, Integer> replyTable = new Hashtable();
-    
-    
     
     
     public Server(int identificador, int idsVecinos[]) throws RemoteException, SQLException, AlreadyBoundException, IOException{
@@ -113,7 +111,7 @@ public class Server extends UnicastRemoteObject implements Hello {
             
             this.manejadorServidores.mandaInstrucciones(inst);
             
-            this.x+=tmpIdVuelo;
+            //this.x+=tmpIdVuelo;
             
         } catch (Exception ex) {
             System.out.println(ex.toString());
@@ -137,7 +135,7 @@ public class Server extends UnicastRemoteObject implements Hello {
             this.manejadorServidores.mandaInstrucciones(inst);
             
             
-            this.y+= tmpIdVuelo;
+            //this.y+= tmpIdVuelo;
             
         } catch (Exception ex) {
             System.out.println(ex.toString());
@@ -185,7 +183,7 @@ public class Server extends UnicastRemoteObject implements Hello {
             
             this.manejadorServidores.mandaInstrucciones(inst);
             
-            this.y *= tmpIdVuelo;
+            //this.x *= tmpIdVuelo;
             
         } catch (Exception ex) {
             System.out.println(ex.toString());
@@ -208,6 +206,8 @@ public class Server extends UnicastRemoteObject implements Hello {
             LOG.agregaInstruccion(inst);
             
             this.manejadorServidores.mandaInstrucciones(inst);this.y *= tmpIdVuelo;
+            //this.y *= tmpIdVuelo;
+            
             
         } catch (Exception ex) {
             System.out.println(ex.toString());
@@ -219,6 +219,42 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     
     
+    
+    public static boolean ejecutaInstruccion(ClaseInstrucciones inst){
+        try{
+            System.out.println("Se ejecuta la instruccion :"+inst.toString());
+            /*NONE = 0;
+            ADD_X = 1;
+            ADD_Y = 2;
+            MULTIPLY_X = 3;
+            MULTIPLY_Y = 4;*/
+            
+            switch(inst.getInstruccion()){
+                case 1:
+                    x+=inst.getValor();
+                    break;
+                case 2:
+                    y+=inst.getValor();
+                    break;
+                case 3:
+                    x*=inst.getValor();
+                    break;
+                case 4:
+                    y*=inst.getValor();
+                    break;
+                default:
+                    System.out.println("Instruccion no encontrada");
+                    break;
+            }
+            
+            
+            
+            return true;
+        }catch(Exception e){
+            System.out.println("Error en ejecuta instrucciones");
+            return false;
+        }
+    }
     
     
     
@@ -368,49 +404,15 @@ static class ClientHandler extends Thread
                      * SACA LA INSTRUCCION DE LA COLA Y EJECUTA
                      * 
                      */
+                    System.out.println("Llegó el release, qué emotivo");
                     
                 }else{
                     if(received.contains("reply")){
+                        
                         System.out.println("Solicitud de reply realizada");
                         
                         System.out.println("Reply entrante:");
                         System.out.println(received);
-                        
-                        jsonObject = new JSONObject(received);
-                        entero = Integer.parseInt(jsonObject.get("id").toString());
-                        
-                        replyTable.put(entero ,1);
-                        
-                        
-                        for(int indice : replyTable.keySet()){
-                            //System.out.println("Adento del foreach");
-                            unosReplyTable = unosReplyTable && replyTable.get(indice) == 1;
-                            if(unosReplyTable == false){
-                                break;
-                            }
-                        }
-                        
-                        System.out.println(replyTable.toString());
-                        System.out.println("Tiene todos los reply?" + unosReplyTable);
-                        
-                        if(unosReplyTable){
-                            if(LOG.getCabeza().getIdentificador() == identificador){
-                                System.out.println("ejecuto");
-                            }else{
-                                System.out.println("A llorar... no me toca :(");
-                            }
-                        }
-                        
-                        
-                        
-                        
-                        
-                        /*replyTable.forEach((Integer k, Integer v) -> { 
-                            unosReplyTable = unosReplyTable && (v == 1);
-                     
-                        });*/
-
-                        
                         
                         /**
                          * 
@@ -435,6 +437,46 @@ static class ClientHandler extends Thread
                          * 
                          * 
                          */
+                        
+                        jsonObject = new JSONObject(received);
+                        entero = Integer.parseInt(jsonObject.get("id").toString());
+                        
+                        replyTable.put(entero ,1);
+                        
+                        
+                        for(int indice : replyTable.keySet()){
+                            //System.out.println("Adento del foreach");
+                            unosReplyTable = unosReplyTable && replyTable.get(indice) == 1;
+                            if(unosReplyTable == false){
+                                break;
+                            }
+                        }
+                        
+                        System.out.println(replyTable.toString());
+                        System.out.println("Tiene todos los reply?" + unosReplyTable);
+                        
+                        if(unosReplyTable){
+                            if(LOG.getCabeza().getIdentificador() == identificador){
+                                //System.out.println("ejecuto por unos");
+                                
+                                ejecutaInstruccion(LOG.pollCabeza());
+                               
+                                String mensajeRelease = "{\"release\":\"release\", \"id\":\""+identificador+"\"}";
+                        
+                                manejadorServidores.mandaReleaseATodos(mensajeRelease);
+                        
+                                
+                                
+                            }else{
+                                System.out.println("A llorar... no me toca :(");
+                            }
+                        }
+                        
+                   
+
+                        
+                        
+                        
                         
                         
                     }else{
