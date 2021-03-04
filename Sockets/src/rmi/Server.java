@@ -17,6 +17,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;     
+import java.util.Hashtable;
 import org.json.JSONException;
 import org.json.JSONObject;
 import seguridad.ManejadorLlaves;
@@ -33,6 +34,11 @@ public class Server extends UnicastRemoteObject implements Hello {
     public static ColaDePrioridad LOG = new ColaDePrioridad();
     private int identificador;
     private ManejadorSockets manejadorServidores;
+    public static final int NUM_NODOS = 3; //esto incluye al nodo actual
+    public static final int NUM_VECINOS = 2;
+    public static Hashtable reply = new Hashtable();
+    
+    
     
     
     public Server(int identificador) throws RemoteException, SQLException, AlreadyBoundException, IOException{
@@ -43,6 +49,10 @@ public class Server extends UnicastRemoteObject implements Hello {
         this.y = 0;
         this.identificador = identificador;
         this.manejadorServidores = new ManejadorSockets();
+        
+        reply.put(218,0 );
+        reply.put(214,0 );
+        //reply.put(206,0);
         
     }
     
@@ -339,9 +349,46 @@ static class ClientHandler extends Thread
                 
                 if(received.contains("release")){
                     System.out.println("Solicitud de release");
+                    
+                    /**
+                     * CUANDO LLEGA LA INSTRUCCION DE RELEASE
+                     * 
+                     * PREGUNTA AL NODO CABEZA SI EL IDENTIFICADOR ES IGUAL 
+                     * AL QUE RECIBIÓ (TEORICAMENTE SÍ DEBERIA SERLO)
+                     * 
+                     * SACA LA INSTRUCCION DE LA COLA Y EJECUTA
+                     * 
+                     */
+                    
                 }else{
                     if(received.contains("reply")){
                         System.out.println("Solicitud de reply realizada");
+                        
+                        /**
+                         * 
+                         * 1. METE A SU HASH EL REPLY RECIBIDO
+                         * 2. PREGUNTARLE A LA TABLA SI TIENE EL REPLY DE
+                         *    TODOS LOS DEMAS.
+                         * 
+                         *    2.1.0 SI SÍ TIENE TODOS LOS REPLY
+                         *    2.1.1 SE PREGUNTA SI EL ELEMENTO QUE SE ENCUENTRA
+                         *          A LA CABEZA DEL LOG TIENE EL MISMO IDENTIFICADOR
+                         *          QUE EL SERVIDOR DE FORMA LOCAL TIENE
+                         *          
+                         *          2.1.1.1 SI SÍ LO TIENE
+                         *          2.1.1.1.1 SI SÍ LO TIENE EJECUTA LA INSTRUCCION DE FOMRA LOCAL, LIMPIA LA HASH TABLE Y MANDA EL RELEASE
+                         * 
+                         *              {"release":"release", "id":"xxx"}
+                         * 
+                         *          2.1.1.2 SI NO LO TIENE NO HACE NADA Y ESPERA EL RELEASE DEL NODO QUE SI TENGA AL INICIO LA INSTRICCION
+                         *          
+                         *           
+                         *    2.1.0 SI NO TIENE TODOS LOS REPLY --> NO HACE NADA
+                         * 
+                         * 
+                         */
+                        
+                        
                     }else{
                         jsonObject = new JSONObject(received);
                         time = Integer.parseInt(jsonObject.get("time").toString());
@@ -355,6 +402,14 @@ static class ClientHandler extends Thread
                                            jsonObject.get("action").toString()+jsonObject.get("target").toString(),
                                            Integer.parseInt(jsonObject.get("value").toString()));
                         LOG.agregaInstruccion(ci);
+                        
+                        /**
+                         * Mandar el reply
+                         * 
+                         * {"reply":"reply", "id":"xxx"}
+                         * 
+                         */
+                        
                         
                         //System.out.println("Estatus actual de la cola de prioridad");
                         //System.out.println(log.toString());
