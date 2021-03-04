@@ -26,6 +26,7 @@ import seguridad.ManejadorLlaves;
 import sockets.ClaseInstrucciones;
 import sockets.ColaDePrioridad;
 import sockets.ManejadorSockets;
+import sockets.Nodo;
 
 public class Server extends UnicastRemoteObject implements Hello {
     
@@ -41,14 +42,14 @@ public class Server extends UnicastRemoteObject implements Hello {
     public static Map <Integer, Integer> replyTable = new Hashtable();
     
     
-    public Server(int identificador, int idsVecinos[]) throws RemoteException, SQLException, AlreadyBoundException, IOException{
+    public Server(int identificador, int idsVecinos[], Nodo[] losVecinos) throws RemoteException, SQLException, AlreadyBoundException, IOException{
 
         this.manejadorLlaves = new ManejadorLlaves();
         this.reloj = 1;
         this.x = 0;
         this.y = 0;
         this.identificador = identificador;
-        this.manejadorServidores = new ManejadorSockets();
+        this.manejadorServidores = new ManejadorSockets(losVecinos);
         
         for (int i = 0; i < idsVecinos.length; i++) {
             replyTable.put(idsVecinos[i],0 );
@@ -267,7 +268,13 @@ public class Server extends UnicastRemoteObject implements Hello {
         try {
             int vecinos[] = {214,218};//cambiar al ejecutar
             int miId = 206; //cambiar al ejecutar
-            Server obj = new Server(miId, vecinos);
+            
+            Nodo n1,n2;
+            n1 = new Nodo("148.205.36.218",5056, 218);
+            n2 = new Nodo("148.205.36.214",5056, 214);
+            Nodo[] losVecinosNodos = {n1,n2};
+            
+            Server obj = new Server(miId, vecinos,losVecinosNodos);
             Registry registry = LocateRegistry.createRegistry(1010);
             registry.bind("Hello", obj);
             System.out.println("Server RMI ready");
