@@ -284,9 +284,9 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     
    //******************************************
-    //************************************
-    //************************************
-    //************************************
+    //****************************************
+    //****************************************
+    //****************************************
     
   public static class SocketGeekForSeek extends Thread
 {     
@@ -405,6 +405,14 @@ static class ClientHandler extends Thread
                      * 
                      */
                     System.out.println("Llegó el release, qué emotivo");
+                    System.out.println("release");
+                    jsonObject = new JSONObject(received);
+                    entero = Integer.parseInt(jsonObject.get("id").toString());
+                    
+                    if(LOG.getCabeza().getIdentificador() == entero){
+                        ejecutaInstruccion(LOG.pollCabeza());
+                    }
+                    
                     
                 }else{
                     if(received.contains("reply")){
