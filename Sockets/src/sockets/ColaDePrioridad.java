@@ -34,4 +34,8 @@ public class ColaDePrioridad {
         return pq.toString();
     }
     
+    public ClaseInstrucciones getCabeza(){
+        return pq.peek();
+    }
+    
 }
