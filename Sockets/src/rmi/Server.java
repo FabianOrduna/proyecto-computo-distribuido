@@ -43,7 +43,7 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     
     
-    public Server(int identificador) throws RemoteException, SQLException, AlreadyBoundException, IOException{
+    public Server(int identificador, int idsVecinos[]) throws RemoteException, SQLException, AlreadyBoundException, IOException{
 
         this.manejadorLlaves = new ManejadorLlaves();
         this.reloj = 1;
@@ -52,9 +52,9 @@ public class Server extends UnicastRemoteObject implements Hello {
         this.identificador = identificador;
         this.manejadorServidores = new ManejadorSockets();
         
-        replyTable.put(218,0 );
-        replyTable.put(214,0 );
-        //replyTable.put(206,0);
+        for (int i = 0; i < idsVecinos.length; i++) {
+            replyTable.put(idsVecinos[i],0 );
+        }
         
     }
     
@@ -229,7 +229,9 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     public static void main(String args[]) throws SQLException, IOException {
         try {
-            Server obj = new Server(206);
+            int vecinos[] = {214,218};//cambiar al ejecutar
+            int miId = 206; //cambiar al ejecutar
+            Server obj = new Server(miId, vecinos);
             Registry registry = LocateRegistry.createRegistry(1010);
             registry.bind("Hello", obj);
             System.out.println("Server RMI ready");
