@@ -17,7 +17,9 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;     
+import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 import seguridad.ManejadorLlaves;
@@ -36,7 +38,7 @@ public class Server extends UnicastRemoteObject implements Hello {
     public static ManejadorSockets manejadorServidores;
     public static final int NUM_NODOS = 3; //esto incluye al nodo actual
     public static final int NUM_VECINOS = 2;
-    public static Hashtable reply = new Hashtable();
+    public static Map <Integer, Integer> replyTable = new Hashtable();
     
     
     
@@ -50,9 +52,9 @@ public class Server extends UnicastRemoteObject implements Hello {
         this.identificador = identificador;
         this.manejadorServidores = new ManejadorSockets();
         
-        reply.put(218,0 );
-        reply.put(214,0 );
-        //reply.put(206,0);
+        replyTable.put(218,0 );
+        replyTable.put(214,0 );
+        //replyTable.put(206,0);
         
     }
     
@@ -323,8 +325,13 @@ static class ClientHandler extends Thread
         JSONObject jsonObject;
         ClaseInstrucciones ci;
         int time = 0;
+        int entero = 0;
+        Enumeration enumeracionReplyTable;
+        boolean unosReplyTable = false;
         while (true)  
         {   
+            unosReplyTable = false;
+            
             
             try { 
   
@@ -367,7 +374,36 @@ static class ClientHandler extends Thread
                         System.out.println("Reply entrante:");
                         System.out.println(received);
                         
+                        jsonObject = new JSONObject(received);
+                        entero = Integer.parseInt(jsonObject.get("id").toString());
                         
+                        replyTable.put(entero ,1);
+                        
+                        
+                        for(int indice : replyTable.keySet()){
+                            unosReplyTable = unosReplyTable && replyTable.get(indice) == 1;
+                            if(unosReplyTable == false){
+                                break;
+                            }
+                        }
+                        
+                        if(unosReplyTable){
+                            if(LOG.getCabeza().getIdentificador() == identificador){
+                                System.out.println("ejecuto");
+                            }else{
+                                System.out.println("A llorar... no me toca :(");
+                            }
+                        }
+                        
+                        
+                        System.out.println(replyTable.toString());
+                        
+                        
+                        /*replyTable.forEach((Integer k, Integer v) -> { 
+                            unosReplyTable = unosReplyTable && (v == 1);
+                     
+                        });*/
+
                         
                         
                         /**
