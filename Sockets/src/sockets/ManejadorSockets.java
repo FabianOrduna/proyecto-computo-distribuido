@@ -60,6 +60,21 @@ public class ManejadorSockets extends Thread {
         }
     }
     
+    public void mandaReleaseATodos(String json) throws IOException{
+        
+        Nodo n;
+        for (int i = 0; i < nodos.size(); i++) {
+            n = nodos.get(i);
+            try{
+                
+                mandaReleaseANodo(json, n);
+            }catch(Exception e){
+                System.out.println(e.toString());
+            }
+            
+        }
+    }
+    
     public Socket recuperaSocketPorHost(String host){
         int i  = 0;
         while(!this.nodos.get(i).getHost().equals(host)){
@@ -145,5 +160,37 @@ public class ManejadorSockets extends Thread {
         }
         
     }
+    
+    
+    
+    
+    public void mandaReleaseANodo(String mensajeJson, Nodo nod){
+        Socket socket;
+        DataOutputStream out;
+        String mensaje;
+        String target;
+        String action;
+        try {
+            System.out.println("Recuperando socket "+nod.getHost());
+            socket = recuperaSocketPorHost(nod.getHost());
+            out = recuperaOutputPorHost(nod.getHost());
+            //in = new DataInputStream(System.in);
+   
+            System.out.println("Enviando mensaje a :"+nod.getHost());
+            System.out.println("Mensaje a enviar: "+mensajeJson);
+            out.writeUTF(mensajeJson);
+            System.out.println("Después de enviar");
+            //in.close();
+            
+            //out.close();
+            //socket.close();
+            
+        } catch (Exception ex) {
+            Logger.getLogger(ManejadorSockets.class.getName()).log(Level.SEVERE, null, ex);
+            //System.out.println(ex.toString());
+        }
+        
+    }
+    
     
 }

@@ -38,4 +38,8 @@ public class ColaDePrioridad {
         return pq.peek();
     }
     
+    public ClaseInstrucciones pollCabeza(){
+        return pq.poll();
+    }
+    
 }
