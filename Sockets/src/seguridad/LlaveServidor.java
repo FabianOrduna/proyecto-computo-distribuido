@@ -94,7 +94,7 @@ public class LlaveServidor {
         byte [] tmp = aliceKeyAgree.generateSecret();
         //System.out.println("generate secret llave servidor");
         for(int i=0; i< tmp.length ; i++) {
-         System.out.print(tmp[i] +" ");
+            //System.out.print(tmp[i] +" ");
         }
         return tmp;
     }

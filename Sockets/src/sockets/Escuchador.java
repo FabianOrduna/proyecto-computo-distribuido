@@ -41,7 +41,7 @@ public class Escuchador {
             JSONObject jsonObject;
             
             ColaDePrioridad log = new ColaDePrioridad();
-            ClaseInstrucciones ci;
+            Mensaje ci;
             
             // leer mensaje hasta recibir Fin
             //int num = 0;
@@ -63,7 +63,7 @@ public class Escuchador {
                         System.out.println(jsonObject.get("target"));
                         System.out.println(jsonObject.get("sender"));
                         System.out.println(jsonObject.get("time"));
-                        ci = new ClaseInstrucciones(Integer.parseInt(jsonObject.get("sender").toString()), 
+                        ci = new Mensaje(Integer.parseInt(jsonObject.get("sender").toString()), 
                                            Integer.parseInt(jsonObject.get("time").toString()),
                                            jsonObject.get("action").toString()+jsonObject.get("target").toString(),
                                            Integer.parseInt(jsonObject.get("value").toString()));

@@ -97,7 +97,7 @@ static class ClientHandler extends Thread
     { 
         String received;
         JSONObject jsonObject;
-        ClaseInstrucciones ci;
+        Mensaje ci;
         while (true)  
         {   
             
@@ -129,7 +129,7 @@ static class ClientHandler extends Thread
                         System.out.println("Solicitud de reply realizada");
                     }else{
                         jsonObject = new JSONObject(received);
-                        ci = new ClaseInstrucciones(Integer.parseInt(jsonObject.get("sender").toString()), 
+                        ci = new Mensaje(Integer.parseInt(jsonObject.get("sender").toString()), 
                                            Integer.parseInt(jsonObject.get("time").toString()),
                                            jsonObject.get("action").toString()+jsonObject.get("target").toString(),
                                            Integer.parseInt(jsonObject.get("value").toString()));

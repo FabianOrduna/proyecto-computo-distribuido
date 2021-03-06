@@ -89,7 +89,7 @@ public class LlaveCliente {
          * of his version of the DH
          * protocol.
          */
-        System.out.println("BOB: Execute PHASE1 ...");
+        //System.out.println("BOB: Execute PHASE1 ...");
         bobKeyAgree.doPhase(this.alicePubKey, true);
         this.generaLlaveSecreta();
         this.bobCipher.init(Cipher.ENCRYPT_MODE, this.bobAesKey);
@@ -102,7 +102,7 @@ public class LlaveCliente {
     private byte[] generarSecreto(){
         byte[] tmp = bobKeyAgree.generateSecret();
         for(int i=0; i< tmp.length ; i++) {
-         System.out.print(tmp[i] +" ");
+            //System.out.print(tmp[i] +" ");
         }
 
         return tmp;

@@ -3,7 +3,7 @@ package sockets;
  *
  * @author mcc06
  */
-public class ClaseInstrucciones implements Comparable{
+public class Mensaje implements Comparable{
     private int identificador;
     private int tiempo;
     private int instruccion;
@@ -14,14 +14,14 @@ public class ClaseInstrucciones implements Comparable{
     public final static int MULTIPLY_X = 3;
     public final static int MULTIPLY_Y = 4;
     
-    public ClaseInstrucciones(int identificador, int tiempo, int instruccion, int value){
+    public Mensaje(int identificador, int tiempo, int instruccion, int value){
         this.identificador = identificador;
         this.tiempo = tiempo;
         this.instruccion = instruccion;
         this.valor = value;
     }
     
-    public ClaseInstrucciones(int identificador, int tiempo, String instruccion, int value){
+    public Mensaje(int identificador, int tiempo, String instruccion, int value){
         this.identificador = identificador;
         this.tiempo = tiempo;
         this.valor = value;
@@ -75,7 +75,7 @@ public class ClaseInstrucciones implements Comparable{
         //si es menor
         int res = -1;
         try{
-            ClaseInstrucciones externo = (ClaseInstrucciones) t;
+            Mensaje externo = (Mensaje) t;
             if(externo.getTiempo() > this.tiempo){
                 res = -1;
             }else{
