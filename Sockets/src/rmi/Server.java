@@ -18,9 +18,10 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;     
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import seguridad.ManejadorLlaves;
@@ -46,11 +47,11 @@ public class Server extends UnicastRemoteObject implements Hello {
     public Server(int identificador, int idsVecinos[], Nodo[] losVecinos) throws RemoteException, SQLException, AlreadyBoundException, IOException{
 
         this.manejadorLlaves = new ManejadorLlaves();
-        this.reloj = 1;
-        this.x = 0;
-        this.y = 0;
-        this.identificador = identificador;
-        this.manejadorServidores = new ManejadorSockets(losVecinos);
+        Server.reloj = 1;
+        Server.x = 0;
+        Server.y = 0;
+        Server.identificador = identificador;
+        Server.manejadorServidores = new ManejadorSockets(losVecinos);
         
         for (int i = 0; i < idsVecinos.length; i++) {
             replyTable.put(idsVecinos[i],0 );
@@ -66,7 +67,7 @@ public class Server extends UnicastRemoteObject implements Hello {
         os.writeObject(objeto);
         byte[] cleartext = out.toByteArray();
         return cleartext;
-        }catch(Exception e){
+        }catch(IOException e){
             System.out.println(e.toString());
             return null;
         }
@@ -100,22 +101,22 @@ public class Server extends UnicastRemoteObject implements Hello {
     public void sumaX(byte[] idVuelo, int llaveId, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) throws RemoteException, SQLException, IOException {
         Mensaje inst;
         //System.out.println("Operacion de suma recibida en el servidor");
-        int tmpIdVuelo = 0;
+        int tmpIdVuelo;
         //System.out.println("Parametro de entrada: ");
         //System.out.println(idVuelo);
         try {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
            // System.out.println("Número a sumar a X:"+tmpIdVuelo);
             //System.out.println("Fin de desencripcion");
-            this.reloj ++;
-            inst = new Mensaje(this.identificador,  this.reloj,  1,  tmpIdVuelo);
+            Server.reloj ++;
+            inst = new Mensaje(Server.identificador,  Server.reloj,  1,  tmpIdVuelo);
             LOG.agregaInstruccion(inst);
             
-            this.manejadorServidores.mandaInstrucciones(inst);
+            Server.manejadorServidores.mandaInstrucciones(inst);
             
             //this.x+=tmpIdVuelo;
             
-        } catch (Exception ex) {
+        } catch (IOException | BadPaddingException | IllegalBlockSizeException ex) {
             System.out.println(ex.toString());
         }
     }
@@ -124,32 +125,32 @@ public class Server extends UnicastRemoteObject implements Hello {
     public void sumaY(byte[] idVuelo, int llaveId, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) throws RemoteException, SQLException, IOException {
         Mensaje inst;
         //System.out.println("Operacion de suma recibida en el servidor");
-        int tmpIdVuelo = 0;
+        int tmpIdVuelo;
         //System.out.println("Parametro de entrada: ");
         //System.out.println(idVuelo);
         try {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
             //System.out.println("Número a sumar a Y:"+tmpIdVuelo);
             //System.out.println("Fin de desencripcion");
-            this.reloj ++;
-            inst = new Mensaje(this.identificador,  this.reloj,  1,  tmpIdVuelo);
+            Server.reloj ++;
+            inst = new Mensaje(Server.identificador,  Server.reloj,  1,  tmpIdVuelo);
             LOG.agregaInstruccion(inst);
-            this.manejadorServidores.mandaInstrucciones(inst);
+            Server.manejadorServidores.mandaInstrucciones(inst);
             
             
             //this.y+= tmpIdVuelo;
             
-        } catch (Exception ex) {
+        } catch (IOException | BadPaddingException | IllegalBlockSizeException ex) {
             System.out.println(ex.toString());
         }
     }
 
     @Override
     public byte[] getX(byte[] clientPubKeyEnc){
-        byte[] tmp = ByteBuffer.allocate(4).putInt(this.x).array();
+        byte[] tmp = ByteBuffer.allocate(4).putInt(Server.x).array();
         try {
             return this.manejadorLlaves.encripta(clientPubKeyEnc, tmp);
-        } catch (Exception ex) {
+        } catch (BadPaddingException | IllegalBlockSizeException ex) {
             System.out.println(ex.toString());
         }
         return null;
@@ -157,10 +158,10 @@ public class Server extends UnicastRemoteObject implements Hello {
 
      @Override
     public byte[] getY(byte[] clientPubKeyEnc){
-        byte[] tmp = ByteBuffer.allocate(4).putInt(this.y).array();
+        byte[] tmp = ByteBuffer.allocate(4).putInt(Server.y).array();
         try {
             return this.manejadorLlaves.encripta(clientPubKeyEnc, tmp);
-        } catch (Exception ex) {
+        } catch (BadPaddingException | IllegalBlockSizeException ex) {
             System.out.println(ex.toString());
         }
         return null;
@@ -172,22 +173,22 @@ public class Server extends UnicastRemoteObject implements Hello {
     public void multiplicaX(byte[] idVuelo, int idLlave, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) {
         Mensaje inst;
         //System.out.println("Operacion de suma recibida en el servidor");
-        int tmpIdVuelo = 0;
+        int tmpIdVuelo;
         //System.out.println("Parametro de entrada: ");
         //System.out.println(idVuelo);
         try {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
             //System.out.println("Número a sumar a Y:"+tmpIdVuelo);
             //System.out.println("Fin de desencripcion");
-            this.reloj ++;
-            inst = new Mensaje(this.identificador,  this.reloj,  3,  tmpIdVuelo);
+            Server.reloj ++;
+            inst = new Mensaje(Server.identificador,  Server.reloj,  3,  tmpIdVuelo);
             LOG.agregaInstruccion(inst);
             
-            this.manejadorServidores.mandaInstrucciones(inst);
+            Server.manejadorServidores.mandaInstrucciones(inst);
             
             //this.x *= tmpIdVuelo;
             
-        } catch (Exception ex) {
+        } catch (IOException | BadPaddingException | IllegalBlockSizeException ex) {
             System.out.println(ex.toString());
         }
     }
@@ -196,22 +197,21 @@ public class Server extends UnicastRemoteObject implements Hello {
     public void multiplicaY(byte[] idVuelo, int idLlave, byte[] clientPubKeyEnc, byte[] paramsEncriptClient) {
         Mensaje inst;
         //System.out.println("Operacion de suma recibida en el servidor");
-        int tmpIdVuelo = 0;
+        int tmpIdVuelo;
         //System.out.println("Parametro de entrada: ");
         //System.out.println(idVuelo);
         try {
             tmpIdVuelo = ByteBuffer.wrap(this.manejadorLlaves.desencripta(clientPubKeyEnc, idVuelo, paramsEncriptClient)).getInt();
             //System.out.println("Número a sumar a Y:"+tmpIdVuelo);
             //System.out.println("Fin de desencripcion");
-            this.reloj ++;
-            inst = new Mensaje(this.identificador,  this.reloj,  4,  tmpIdVuelo);
+            Server.reloj ++;
+            inst = new Mensaje(Server.identificador,  Server.reloj,  4,  tmpIdVuelo);
             LOG.agregaInstruccion(inst);
             
-            this.manejadorServidores.mandaInstrucciones(inst);this.y *= tmpIdVuelo;
+            Server.manejadorServidores.mandaInstrucciones(inst);Server.y *= tmpIdVuelo;
             //this.y *= tmpIdVuelo;
             
-            
-        } catch (Exception ex) {
+        } catch (IOException | BadPaddingException | IllegalBlockSizeException ex) {
             System.out.println(ex.toString());
         }
     }
@@ -293,7 +293,6 @@ public class Server extends UnicastRemoteObject implements Hello {
             
         } catch (AlreadyBoundException | RemoteException e) {
             System.err.println("Server exception no funcionó: " + e.toString());
-            e.printStackTrace();
         }
     } 
     
@@ -341,9 +340,8 @@ public class Server extends UnicastRemoteObject implements Hello {
                     t.start();
                     
                 }
-                catch (Exception e){
+                catch (IOException e){
                     s.close();
-                    e.printStackTrace();
                 } 
             }
         } catch (IOException ex) {
@@ -378,8 +376,8 @@ static class ManejadorClientes extends Thread
         String received;
         JSONObject jsonObject;
         Mensaje ci;
-        int time = 0;
-        int entero = 0;
+        int time;
+        int entero;
         boolean unosReplyTable;
         while (true)  
         {   
@@ -542,12 +540,12 @@ static class ManejadorClientes extends Thread
                     }
                 }
                  
-            } catch (IOException  e) { 
+            } catch (IOException | JSONException  e) { 
                 //System.out.println(e.toString());
                 
-            } catch (JSONException ex) {
-                //Logger.getLogger(ArribaConRMI.class.getName()).log(Level.SEVERE, null, ex);
             }
+            //Logger.getLogger(ArribaConRMI.class.getName()).log(Level.SEVERE, null, ex);
+            
             
             
         } 
@@ -559,7 +557,6 @@ static class ManejadorClientes extends Thread
             this.dos.close(); 
               
         }catch(IOException e){ 
-            e.printStackTrace(); 
         } 
     } 
     }

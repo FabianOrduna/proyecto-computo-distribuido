@@ -16,7 +16,9 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
+import java.sql.SQLException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import seguridad.LlaveCliente;
 
@@ -56,7 +58,7 @@ public class Cliente {
         byte[] recovered;
         byte[] pars;
         byte[] res;
-        int val = 0;
+        int val;
 
         byte[] parametroAMandar;
         
@@ -83,7 +85,6 @@ public class Cliente {
                     recovered = llaveCliente.decriptaMensaje(res, pars);
                     val = ByteBuffer.wrap(recovered).getInt();
                     System.out.println("El valor de X es: "+val);
-                    val = 0;
                     break;
                     
                 case 4: //si necesita mandar parámetros
@@ -92,7 +93,6 @@ public class Cliente {
                     recovered = llaveCliente.decriptaMensaje(res, pars);
                     val = ByteBuffer.wrap(recovered).getInt();
                     System.out.println("El valor de Y es: "+val);
-                    val = 0;
                     break;
                     
                 case 5: //si necesita mandar parámetros
@@ -113,7 +113,7 @@ public class Cliente {
                     System.out.println("Opción no encontrada");
                     break;
             }
-        }catch(Exception e){
+        }catch(IOException | NumberFormatException | InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException | SQLException | BadPaddingException | IllegalBlockSizeException e){
             System.out.println("Error opciones lciente");
             System.out.println(e.toString());
             e.getStackTrace();
@@ -131,8 +131,7 @@ public class Cliente {
             oos.writeObject(object);
             byte[] bytes = baos.toByteArray();
             return bytes;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
         }finally {
             try {
                 if(baos != null){
@@ -141,28 +140,25 @@ public class Cliente {
                 if (oos != null) {
                     oos.close();
                 }
-            } catch (Exception e2) {
-                e2.printStackTrace();
+            } catch (IOException e2) {
             }
         }
         return null;
     }
     
     public static Object deserialize(byte[] bytes){
-        ByteArrayInputStream bais = null;
-        ObjectInputStream ois = null;
+        ByteArrayInputStream bais;
+        ObjectInputStream ois;
         try{
             bais = new ByteArrayInputStream(bytes);
             ois = new ObjectInputStream(bais);
             return ois.readObject();
-        }catch(Exception e){
+        }catch(IOException | ClassNotFoundException e){
             System.out.println(e.toString());
-            e.printStackTrace();
         }finally {
             try {
 
             } catch (Exception e2) {
-                e2.printStackTrace();
             }
         }
         return null;
