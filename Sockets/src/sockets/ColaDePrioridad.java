@@ -14,19 +14,19 @@ import java.util.PriorityQueue;
  */
 public class ColaDePrioridad {
     
-    PriorityQueue<ClaseInstrucciones> pq;
+    PriorityQueue<Mensaje> pq;
 
     public ColaDePrioridad() {
         pq = new PriorityQueue();
     }
     
-    public boolean agregaInstruccion(ClaseInstrucciones inst){
+    public boolean agregaInstruccion(Mensaje inst){
         boolean res = pq.add(inst);
         System.out.println(pq.toString());
         return res;
     }
     
-    public ClaseInstrucciones sacaInstruccion(){
+    public Mensaje sacaInstruccion(){
         return pq.poll();
     }
     
@@ -34,11 +34,11 @@ public class ColaDePrioridad {
         return pq.toString();
     }
     
-    public ClaseInstrucciones getCabeza(){
+    public Mensaje getCabeza(){
         return pq.peek();
     }
     
-    public ClaseInstrucciones pollCabeza(){
+    public Mensaje pollCabeza(){
         return pq.poll();
     }
     

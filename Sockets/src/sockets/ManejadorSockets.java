@@ -43,7 +43,7 @@ public class ManejadorSockets extends Thread {
         }        
     }
     
-    public void mandaInstrucciones(ClaseInstrucciones inst) throws IOException{
+    public void mandaInstrucciones(Mensaje inst) throws IOException{
         
         if(this.connSockets.isEmpty()){
             Socket s;
@@ -125,11 +125,12 @@ public class ManejadorSockets extends Thread {
             i++;
         }
         out = this.outputs.get(i);
-        out.writeUTF(json);
+        //out.writeUTF(json);
+        out.write(json.getBytes());
         System.out.println("Reply enviado a "+identificador);
     }
     
-    public void mandaInstruccionANodo(ClaseInstrucciones inst, Nodo nod){
+    public void mandaInstruccionANodo(Mensaje inst, Nodo nod){
         Socket socket;
         DataOutputStream out;
         String mensaje;
@@ -157,7 +158,8 @@ public class ManejadorSockets extends Thread {
             //mensaje = "Hola";
             System.out.println("Enviando mensaje a :"+nod.getHost());
             System.out.println("Mensaje a enviar: "+mensaje);
-            out.writeUTF(mensaje);
+            //out.writeUTF(mensaje);
+            out.write(mensaje.getBytes());
             System.out.println("Después de enviar");
             //in.close();
             
@@ -188,7 +190,9 @@ public class ManejadorSockets extends Thread {
    
             System.out.println("Enviando mensaje a :"+nod.getHost());
             System.out.println("Mensaje a enviar: "+mensajeJson);
-            out.writeUTF(mensajeJson);
+            //out.writeUTF(mensajeJson);
+            out.write(mensajeJson.getBytes());
+            
             System.out.println("Después de enviar");
             //in.close();
             
