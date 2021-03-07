@@ -135,7 +135,7 @@ public class Server extends UnicastRemoteObject implements Hello {
             //System.out.println("Número a sumar a Y:"+tmpIdVuelo);
             //System.out.println("Fin de desencripcion");
             Server.reloj ++;
-            inst = new Mensaje(Server.identificador,  Server.reloj,  1,  tmpIdVuelo);
+            inst = new Mensaje(Server.identificador,  Server.reloj,  2,  tmpIdVuelo);
             LOG.agregaInstruccion(inst);
             Server.manejadorServidores.mandaInstrucciones(inst);
             
@@ -282,7 +282,7 @@ public class Server extends UnicastRemoteObject implements Hello {
             
             //Nodo[] losVecinosNodos = {n1};
             Nodo[] losVecinosNodos = {n3};
-            //losVecinosNodos = {n1,n2};
+            //Nodo[] losVecinosNodos = {n1,n2};
             
             
             Server obj = new Server(miId, vecinos,losVecinosNodos);
@@ -399,7 +399,7 @@ static class ManejadorClientes extends Thread
                 // receive the answer from client 
                 //received = dis.readUTF();
                 //received = dis.readLine();
-                System.out.println("Leer");
+                System.out.println("Leer -->");
                 received = reader.readLine();
                 System.out.println("Después de leer");
                 
@@ -539,7 +539,7 @@ static class ManejadorClientes extends Thread
                          * 
                          */
                         
-                        String mensajeReply = "{\"reply\":\"reply\", \"id\":\""+identificador+"\"}";
+                        String mensajeReply = "{\"reply\":\"reply\", \"id\":\""+identificador+"\"}\n";
                         
                         manejadorServidores.mandaJSONANodoPorIdentificador(Integer.parseInt(jsonObject.get("sender").toString()), mensajeReply);
                         
