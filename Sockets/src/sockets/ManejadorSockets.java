@@ -154,7 +154,7 @@ public class ManejadorSockets extends Thread {
                 action = "MULTIPLY";
             }
             
-            mensaje = "{\"action\":\""+action+"\", \"value\":"+inst.getValor()+", \"target\":\""+target+"\", \"sender\":\""+inst.getIdentificador()+"\", \"time\":\""+inst.getTiempo()+"\"}";
+            mensaje = "{\"action\":\""+action+"\", \"value\":"+inst.getValor()+", \"target\":\""+target+"\", \"sender\":\""+inst.getIdentificador()+"\", \"time\":\""+inst.getTiempo()+"\"}\n";
             //mensaje = "Hola";
             System.out.println("Enviando mensaje a :"+nod.getHost());
             System.out.println("Mensaje a enviar: "+mensaje);
