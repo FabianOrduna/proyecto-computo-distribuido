@@ -49,11 +49,14 @@ public class ManejadorSockets extends Thread {
             Socket s;
             
             for (int i = 0; i < nodos.size(); i++) {
-                s= new Socket(this.nodos.get(i).getHost(), this.nodos.get(i).getPort());
-                this.connSockets.add(s);
-                System.out.println("Añadiendo el output"+this.nodos.get(i).getHost());
-                this.outputs.add(new DataOutputStream(s.getOutputStream()));
-                System.out.println("Después de añadir el output");
+                if(this.nodos.get(i).isMantenerAbierto()){
+                    s= new Socket(this.nodos.get(i).getHost(), this.nodos.get(i).getPort());
+                    this.connSockets.add(s);
+                    System.out.println("Añadiendo el output"+this.nodos.get(i).getHost());
+                    this.outputs.add(new DataOutputStream(s.getOutputStream()));
+                    System.out.println("Después de añadir el output");
+                }
+                
             }
         }
         
@@ -107,15 +110,18 @@ public class ManejadorSockets extends Thread {
             Socket s;
             
             for (int i = 0; i < nodos.size(); i++) {
-                s= new Socket(this.nodos.get(i).getHost(), this.nodos.get(i).getPort());
-                this.connSockets.add(s);
-                System.out.println("Añadiendo el output"+this.nodos.get(i).getHost());
-                this.outputs.add(new DataOutputStream(s.getOutputStream()));
-                System.out.println("Después de añadir el output");
+                if(this.nodos.get(i).isMantenerAbierto()){
+                    s= new Socket(this.nodos.get(i).getHost(), this.nodos.get(i).getPort());
+                    this.connSockets.add(s);
+                    System.out.println("Añadiendo el output"+this.nodos.get(i).getHost());
+                    this.outputs.add(new DataOutputStream(s.getOutputStream()));
+                    System.out.println("Después de añadir el output");
+                }
+                
             }
         }
         
-        Socket s;
+        Socket s = null;
         DataOutputStream out;
         int i  = 0;
         System.out.println("El total de nodos son "+this.nodos.size());
@@ -124,12 +130,25 @@ public class ManejadorSockets extends Thread {
         while(this.nodos.get(i).getId() != identificador){
             i++;
         }
-        out = this.outputs.get(i);
+        if(this.nodos.get(i).isMantenerAbierto()){
+            out = this.outputs.get(i);
+        }else{
+            System.out.println("El host "+this.nodos.get(i).getHost()+" se maneja abriendo y cerrando conexion.");
+            System.out.println("Abriendo conexion con "+this.nodos.get(i).getHost());
+            s= new Socket(this.nodos.get(i).getHost(), this.nodos.get(i).getPort());
+            out = new DataOutputStream(s.getOutputStream());
+        }
         //out.writeUTF(json);
         out.write(json.getBytes());
         System.out.println("Reply enviado a "+identificador);
-    }
-    
+        
+        if(!this.nodos.get(i).isMantenerAbierto()){
+            out.close();
+            s.close();
+            System.out.println("Conexion cerrada con "+this.nodos.get(i).getHost());
+        }
+ 
+    }    
     public void mandaInstruccionANodo(Mensaje inst, Nodo nod){
         Socket socket;
         DataOutputStream out;
@@ -138,8 +157,13 @@ public class ManejadorSockets extends Thread {
         String action;
         try {
             System.out.println("Recuperando socket "+nod.getHost());
-            socket = recuperaSocketPorHost(nod.getHost());
-            out = recuperaOutputPorHost(nod.getHost());
+            if(nod.isMantenerAbierto()){
+                socket = recuperaSocketPorHost(nod.getHost());
+                out = recuperaOutputPorHost(nod.getHost()); 
+            }else{
+                socket= new Socket(nod.getHost(), nod.getPort());
+                out = new DataOutputStream(socket.getOutputStream());
+            }            
             //in = new DataInputStream(System.in);
             
             if(inst.getInstruccion() == inst.ADD_X || inst.getInstruccion() == inst.MULTIPLY_X){
@@ -163,19 +187,18 @@ public class ManejadorSockets extends Thread {
             System.out.println("Después de enviar");
             //in.close();
             
-            //out.close();
-            //socket.close();
-            
+            if(!nod.isMantenerAbierto()){
+                out.close();
+                socket.close();
+            }
+                        
         } catch (Exception ex) {
             Logger.getLogger(ManejadorSockets.class.getName()).log(Level.SEVERE, null, ex);
             //System.out.println(ex.toString());
         }
         
     }
-    
-    
-    
-    
+      
     public void mandaReleaseANodo(String mensajeJson, Nodo nod){
         Socket socket;
         DataOutputStream out;
@@ -184,8 +207,14 @@ public class ManejadorSockets extends Thread {
         String action;
         try {
             System.out.println("Recuperando socket "+nod.getHost());
-            socket = recuperaSocketPorHost(nod.getHost());
-            out = recuperaOutputPorHost(nod.getHost());
+            if(nod.isMantenerAbierto()){
+                socket = recuperaSocketPorHost(nod.getHost());
+                out = recuperaOutputPorHost(nod.getHost()); 
+            }else{
+                socket= new Socket(nod.getHost(), nod.getPort());
+                out = new DataOutputStream(socket.getOutputStream());
+            } 
+            
             //in = new DataInputStream(System.in);
    
             System.out.println("Enviando mensaje a :"+nod.getHost());
@@ -196,8 +225,10 @@ public class ManejadorSockets extends Thread {
             System.out.println("Después de enviar");
             //in.close();
             
-            //out.close();
-            //socket.close();
+            if(!nod.isMantenerAbierto()){
+                out.close();
+                socket.close();
+            }
             
         } catch (Exception ex) {
             Logger.getLogger(ManejadorSockets.class.getName()).log(Level.SEVERE, null, ex);

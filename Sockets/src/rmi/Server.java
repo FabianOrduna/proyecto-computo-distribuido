@@ -269,20 +269,21 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     public static void main(String args[]) throws SQLException, IOException {
         try {
-            int vecinos[] = {214,218};//cambiar al ejecutar
+            int vecinos[] = {205,215};//cambiar al ejecutar
             int miId = 206; //cambiar al ejecutar
             
             Nodo n1,n2,n3;
-            n1 = new Nodo("148.205.36.218",5056, 218);
-            n2 = new Nodo("148.205.36.214",5056, 214);
+            //n1 = new Nodo("148.205.36.218",5056, 218, false);
+            //n2 = new Nodo("148.205.36.214",5056, 214);
             //n3 = new Nodo("148.205.36.203",1026, 203);//brandon
             //n1 = new Nodo("148.205.36.210",9000, 210);//braulio
-            //n1 = new Nodo("201.156.4.134",5000, 134);//pedro
+            n1 = new Nodo("148.205.36.205",5000, 205, false);//pedro
+            n2 = new Nodo("148.205.36.215",15000, 215,false);//diego
             //n1 = new Nodo("148.205.36.207",5000, 207);//julio
             
-            //Nodo[] losVecinosNodos = {n1};
-            //Nodo[] losVecinosNodos = {n3};
             Nodo[] losVecinosNodos = {n1,n2};
+            //Nodo[] losVecinosNodos = {n3};
+            //Nodo[] losVecinosNodos = {n1,n2};
             
             
             Server obj = new Server(miId, vecinos,losVecinosNodos);
@@ -409,8 +410,12 @@ static class ManejadorClientes extends Thread
                 System.out.println("Lo que quiere el cliente"+s.toString()+" es: ");
                 System.out.println(received);
                 //System.out.println("Valor actual de la variable: "+ArribaConRMI.numero);
+                if(received == null){
+                    System.out.println("Se recibe algo nulo");
+                }
                 
-                if(received.equals("Exit")) 
+                
+                if(received!= null && received.equals("Exit")) 
                 {  
                     System.out.println("Client " + this.s + " sends exit..."); 
                     //System.out.println("Closing this connection."); 
@@ -419,7 +424,7 @@ static class ManejadorClientes extends Thread
                     break; 
                 } 
                 
-                if(received.contains("release")){
+                if(received!= null && received.contains("release")){
                     System.out.println("Solicitud de release");
                     
                     /**
@@ -445,7 +450,7 @@ static class ManejadorClientes extends Thread
                     
                     
                 }else{
-                    if(received.contains("reply")){
+                    if(received!= null && received.contains("reply")){
                         
                         System.out.println("Solicitud de reply realizada");
                         
@@ -518,33 +523,35 @@ static class ManejadorClientes extends Thread
                         
                         
                     }else{
-                        jsonObject = new JSONObject(received);
-                        time = Integer.parseInt(jsonObject.get("time").toString());
-                        if(reloj > time){
-                            time = reloj;
-                        }else{
-                            reloj = time;
+                        if(received!= null){
+                            jsonObject = new JSONObject(received);
+                            time = Integer.parseInt(jsonObject.get("time").toString());
+                            if(reloj > time){
+                                time = reloj;
+                            }else{
+                                reloj = time;
+                            }
+                            System.out.println(received);
+                            ci = new Mensaje(Integer.parseInt(jsonObject.get("sender").toString()), 
+                                               time,
+                                               jsonObject.get("action").toString()+jsonObject.get("target").toString(),
+                                               Integer.parseInt(jsonObject.get("value").toString()));
+                            LOG.agregaInstruccion(ci);
+
+                            /**
+                             * Mandar el reply
+                             * 
+                             * {"reply":"reply", "id":"xxx"}
+                             * 
+                             */
+
+                            String mensajeReply = "{\"reply\":\"reply\", \"id\":\""+identificador+"\"}\n";
+
+                            manejadorServidores.mandaJSONANodoPorIdentificador(Integer.parseInt(jsonObject.get("sender").toString()), mensajeReply);
+
+                            //System.out.println("Estatus actual de la cola de prioridad");
+                            //System.out.println(log.toString());
                         }
-                        System.out.println(received);
-                        ci = new Mensaje(Integer.parseInt(jsonObject.get("sender").toString()), 
-                                           time,
-                                           jsonObject.get("action").toString()+jsonObject.get("target").toString(),
-                                           Integer.parseInt(jsonObject.get("value").toString()));
-                        LOG.agregaInstruccion(ci);
-                        
-                        /**
-                         * Mandar el reply
-                         * 
-                         * {"reply":"reply", "id":"xxx"}
-                         * 
-                         */
-                        
-                        String mensajeReply = "{\"reply\":\"reply\", \"id\":\""+identificador+"\"}\n";
-                        
-                        manejadorServidores.mandaJSONANodoPorIdentificador(Integer.parseInt(jsonObject.get("sender").toString()), mensajeReply);
-                        
-                        //System.out.println("Estatus actual de la cola de prioridad");
-                        //System.out.println(log.toString());
                     }
                 }
                  

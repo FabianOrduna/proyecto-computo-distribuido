@@ -13,11 +13,20 @@ public class Nodo {
     private String host;
     private int port;
     private int id;
+    private boolean mantenerAbierto;
 
     public Nodo(String host, int port, int id) {
         this.host = host;
         this.port = port;
         this.id = id;
+        this.mantenerAbierto = true;
+    }
+    
+    public Nodo(String host, int port, int id, boolean mantenerAbierto) {
+        this.host = host;
+        this.port = port;
+        this.id = id;
+        this.mantenerAbierto = mantenerAbierto;
     }
     
     public String getHost() {
@@ -31,7 +40,10 @@ public class Nodo {
     public int getId() {
         return id;
     }
-    
+
+    public boolean isMantenerAbierto() {
+        return mantenerAbierto;
+    }
     
     
     
