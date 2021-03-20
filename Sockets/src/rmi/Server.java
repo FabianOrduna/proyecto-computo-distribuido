@@ -269,21 +269,21 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     public static void main(String args[]) throws SQLException, IOException {
         try {
-            int vecinos[] = {205,215};//cambiar al ejecutar
+            int vecinos[] = {203};//cambiar al ejecutar
             int miId = 206; //cambiar al ejecutar
             
             Nodo n1,n2,n3;
             //n1 = new Nodo("148.205.36.218",5056, 218, false);
             //n2 = new Nodo("148.205.36.214",5056, 214);
-            //n3 = new Nodo("148.205.36.203",1026, 203);//brandon
+            n2 = new Nodo("148.205.36.203",3000, 203, false);//brandon
             //n1 = new Nodo("148.205.36.210",9000, 210);//braulio
-            n1 = new Nodo("148.205.36.205",5000, 205, false);//pedro
-            n2 = new Nodo("148.205.36.215",15000, 215,false);//diego
+            //n1 = new Nodo("148.205.36.205",5000, 205);//pedro
+            //n2 = new Nodo("148.205.36.215",15000, 215);//diego
             //n1 = new Nodo("148.205.36.207",5000, 207);//julio
             
-            Nodo[] losVecinosNodos = {n1,n2};
-            //Nodo[] losVecinosNodos = {n3};
-            //Nodo[] losVecinosNodos = {n1,n2};
+           // Nodo[] losVecinosNodos = {n1,n2,n3};
+            Nodo[] losVecinosNodos = {n2};
+            //Nodo[] losVecinosNodos = {n1};
             
             
             Server obj = new Server(miId, vecinos,losVecinosNodos);
@@ -328,7 +328,7 @@ public class Server extends UnicastRemoteObject implements Hello {
                     //System.out.println("Esperando a cliente");
                     s = ss.accept();
                     
-                    //System.out.println("A new client is connected : " + s);
+                    System.out.println("A new client is connected : " + s);
                     
                     // obtaining input and out streams
                     DataInputStream dis = new DataInputStream(new BufferedInputStream(s.getInputStream()));
@@ -400,18 +400,17 @@ static class ManejadorClientes extends Thread
                 // receive the answer from client 
                 //received = dis.readUTF();
                 //received = dis.readLine();
-                System.out.println("Leer -->");
                 received = reader.readLine();
-                System.out.println("Después de leer");
+                if(received!=null){
+                    System.out.println("Leer -->");
+                    System.out.println("Después de leer");
+                    System.out.println("Lo que quiere el cliente"+s.toString()+" es: ");
+                    System.out.println(received);
+                }
                 
-                
-                
-                
-                System.out.println("Lo que quiere el cliente"+s.toString()+" es: ");
-                System.out.println(received);
                 //System.out.println("Valor actual de la variable: "+ArribaConRMI.numero);
                 if(received == null){
-                    System.out.println("Se recibe algo nulo");
+                    //System.out.println("Se recibe algo nulo");
                 }
                 
                 
