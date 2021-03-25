@@ -15,13 +15,16 @@ import java.util.PriorityQueue;
 public class ColaDePrioridad {
     
     PriorityQueue<Mensaje> pq;
+    PriorityQueue<Mensaje> historico;
 
     public ColaDePrioridad() {
         pq = new PriorityQueue();
+        historico = new PriorityQueue();
     }
     
     public boolean agregaInstruccion(Mensaje inst){
         boolean res = pq.add(inst);
+        historico.add(inst);
         System.out.println(pq.toString());
         return res;
     }
@@ -30,6 +33,7 @@ public class ColaDePrioridad {
         return pq.poll();
     }
     
+    @Override
     public String toString(){
         return pq.toString();
     }
@@ -40,6 +44,10 @@ public class ColaDePrioridad {
     
     public Mensaje pollCabeza(){
         return pq.poll();
+    }
+    
+    public PriorityQueue getHistorico(){
+        return this.historico;
     }
     
 }

@@ -258,32 +258,27 @@ public class Server extends UnicastRemoteObject implements Hello {
             System.out.println("Error en ejecuta instrucciones");
             return false;
         }
-    }
-    
-    
-    
-    
-    
+    }  
     
     
     
     public static void main(String args[]) throws SQLException, IOException {
         try {
-            int vecinos[] = {203};//cambiar al ejecutar
+            int vecinos[] = {215};//cambiar al ejecutar
             int miId = 206; //cambiar al ejecutar
             
             Nodo n1,n2,n3;
             //n1 = new Nodo("148.205.36.218",5056, 218, false);
             //n2 = new Nodo("148.205.36.214",5056, 214);
-            n2 = new Nodo("148.205.36.203",3000, 203, false);//brandon
+            //n2 = new Nodo("148.205.36.203",3000, 203, false);//brandon
             //n1 = new Nodo("148.205.36.210",9000, 210);//braulio
             //n1 = new Nodo("148.205.36.205",5000, 205);//pedro
-            //n2 = new Nodo("148.205.36.215",15000, 215);//diego
+            n2 = new Nodo("148.205.36.215",15000, 215);//diego
             //n1 = new Nodo("148.205.36.207",5000, 207);//julio
             
-           // Nodo[] losVecinosNodos = {n1,n2,n3};
+           // Nodo[] losVecinosNodos = {n1,n2,n3};1
             Nodo[] losVecinosNodos = {n2};
-            //Nodo[] losVecinosNodos = {n1};
+            //Nodo[] losVecinosNodos = {n1,n2};
             
             
             Server obj = new Server(miId, vecinos,losVecinosNodos);
@@ -307,7 +302,7 @@ public class Server extends UnicastRemoteObject implements Hello {
     //****************************************
     
   public static class ServidorSockets extends Thread
-{     
+{   
     @Override
     public void run()  
     { 
@@ -503,7 +498,7 @@ static class ManejadorClientes extends Thread
                                 
                                 ejecutaInstruccion(LOG.pollCabeza());
                                
-                                String mensajeRelease = "{\"release\":\"release\", \"id\":\""+identificador+"\"}\n";
+                                String mensajeRelease = "{\"release\":\"release\", \"id\":\""+identificador+"\", \"time\":\""+reloj+"\"}\n";
                         
                                 manejadorServidores.mandaReleaseATodos(mensajeRelease);
                         
@@ -544,7 +539,7 @@ static class ManejadorClientes extends Thread
                              * 
                              */
 
-                            String mensajeReply = "{\"reply\":\"reply\", \"id\":\""+identificador+"\"}\n";
+                            String mensajeReply = "{\"reply\":\"reply\", \"id\":\""+identificador+"\", \"time\":\""+reloj+"\"}\n";
 
                             manejadorServidores.mandaJSONANodoPorIdentificador(Integer.parseInt(jsonObject.get("sender").toString()), mensajeReply);
 
