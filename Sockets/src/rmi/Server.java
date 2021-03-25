@@ -264,20 +264,22 @@ public class Server extends UnicastRemoteObject implements Hello {
     
     public static void main(String args[]) throws SQLException, IOException {
         try {
-            int vecinos[] = {215};//cambiar al ejecutar
+            int vecinos[] = {203,205,215};//cambiar al ejecutar
             int miId = 206; //cambiar al ejecutar
             
             Nodo n1,n2,n3;
             //n1 = new Nodo("148.205.36.218",5056, 218, false);
             //n2 = new Nodo("148.205.36.214",5056, 214);
-            //n2 = new Nodo("148.205.36.203",3000, 203, false);//brandon
+            n2 = new Nodo("148.205.36.203",3000, 203, false);//brandon
             //n1 = new Nodo("148.205.36.210",9000, 210);//braulio
-            //n1 = new Nodo("148.205.36.205",5000, 205);//pedro
-            n2 = new Nodo("148.205.36.215",15000, 215);//diego
+            n3 = new Nodo("148.205.36.205",5000, 205,false);//pedro
+            n1 = new Nodo("148.205.36.215",15000, 215,false);//diego
             //n1 = new Nodo("148.205.36.207",5000, 207);//julio
             
-           // Nodo[] losVecinosNodos = {n1,n2,n3};1
-            Nodo[] losVecinosNodos = {n2};
+            Nodo[] losVecinosNodos = {n1,n2,n3};
+            
+            //Nodo[] losVecinosNodos = {n2};
+            //Nodo[] losVecinosNodos = {n1};
             //Nodo[] losVecinosNodos = {n1,n2};
             
             
